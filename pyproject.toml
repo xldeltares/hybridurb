@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "hybridurb"
+version = "0.1.0"
+description = "HybridUrb is a Python package to perform hybird urban flood modelling using the methodology proposed in Li & Willems (2020)."
+authors = ["xiaohan.li-deltares <xiaohan.li@deltares.nl>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "~3.8"
+networkx = "3.0"
+gdal = "3.6.1"
+hydromt = "0.6.0"
+pytest = "7.2.1"
+scikit-learn = "1.2.0"
+sympy = "1.11.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
