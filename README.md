@@ -1,4 +1,4 @@
-# HybridUrb
+# HybridUrb: a Python package to perform hybird urban flood modelling
 
 HybridUrb is a Python package to perform hybird urban flood modelling using the methodology proposed in Li & Willems (2020).
 
