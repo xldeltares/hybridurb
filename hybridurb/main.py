@@ -14,10 +14,11 @@ from .runners import NowcastRunner
 ### Below is the documentation for the commandline interface, see the CLICK-package.
 @click.command(short_help="Run HybridUrb models")
 @click.argument("root_dir", type=click.Path(exists=True, resolve_path=True, dir_okay=True, file_okay=False))
-@click.option("--mode", type = str, default='nowcast', help="Mode of the run: hindcast (not implemented), nowcast")
+@click.option("--mode", type = str, default=None, help="Mode of the run: hindcast (not implemented), nowcast")
 @click.option("--t0",  type = str, default=None, help="T0 of the run (%Y%m%d%H%M)")
-def run(root_dir: str, mode:str = "nowcast", t0: str = None):
-    click.echo(f"run HybridUrb in {root_dir} using {mode} mode. T0:{t0}")
+@click.option("--export_to_fews",  type = bool, default=False,  is_flag=True, help="Export MayLayerFiles for Delft-FEWS.")
+def run(root_dir: str, mode:str = None, t0: str = None, export_to_fews: bool = False):
+    click.echo(f"run HybridUrb using the following arguments: {root_dir} --mode {mode} --t0 {t0} --export_to_fews {export_to_fews}")
     def _as_path(my_dir: str) -> Optional[Path]:
         if not my_dir:
             return None
@@ -28,6 +29,9 @@ def run(root_dir: str, mode:str = "nowcast", t0: str = None):
         return _my_dir
 
     def _as_datetime(my_time:str):
+        if not my_time:
+            return None
+
         try:
             _my_time = datetime.strptime(my_time, '%Y%m%d%H%M')
         except:
@@ -41,8 +45,17 @@ def run(root_dir: str, mode:str = "nowcast", t0: str = None):
     if mode == 'nowcast':
         _runner = NowcastRunner(root_dir = root_dir, t0 = t0)
         _runner.run()
-    else:
+
+    elif mode == 'hindcast':
+        # _runner = HindcastRunner(root_dir = root_dir, t0 = t0)
         raise NotImplementedError
+
+    else:
+        Runner = NowcastRunner # FIXME: change this after runner structure is more clear
+        _runner = Runner(root_dir = root_dir, t0 = t0)
+
+    if export_to_fews is True:
+        _runner.export_to_fews()
 
 
 if __name__ == "__main__":

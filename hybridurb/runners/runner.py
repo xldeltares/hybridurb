@@ -16,6 +16,7 @@ import pstats
 from pstats import SortKey
 import io
 import logging
+import re
 
 logger = logging.getLogger(__name__)
 # TODO use propoer logger
@@ -163,10 +164,13 @@ def predictCI(model, X_test):
 
 
 # predict mean results
-def predict(at_time, rgrr_filename, rgid_filename, X, lams, model, equ, write_output=False, hazard_map=False):
+def predict(at_time, rgrr_filename, rgid_filename, X, lams, model, equ, output_dir=None, hazard_map=False):
     # time
     at_time_ = datetime.datetime.strptime(at_time, '%Y%m%d%H%M')
     t0 = time.time()
+
+    # ensemble member (derive from rainfall file)
+    ens_id = re.findall("ens([0-9]+)", Path(rgrr_filename).name)[0]
 
     # rainfall preprocessing
     rg_id = pd.read_csv(rgid_filename, index_col=0)
@@ -196,14 +200,12 @@ def predict(at_time, rgrr_filename, rgid_filename, X, lams, model, equ, write_ou
     # confidence interval prediction
     # y_pred = predictCI(model, X_test)
     # mean prediction
-    y_pred = model.predict(X_test); y_pred = y_pred.to_frame(name = 'mean')
+    y_pred = model.predict(X_test); y_pred = y_pred.to_frame(name = ens_id)
     ft = (d.flooding_time - at_time_) / np.timedelta64(1, 'm')
     # print(f'\tmember: %s timeit: {time.time() - t0})' % rgrr_filename.split('ens')[-1].split('.csv')[0])
 
     # write output
-    if write_output:
-        y_pred.to_csv(rgrr_filename + '_ypred.csv')
-        print(f'\toutput saved')
+    y_pred.to_csv(Path(output_dir).joinpath(f"{at_time}_ens{ens_id}_ypred.csv"))
 
     # hazard map
     if hazard_map:
@@ -225,11 +227,14 @@ class NowcastRunner(object):
         self._graphmodel = None
         self._lambdamodel = None
         self._statsmodel = None
-    def initialise_model(self):
+        self._initialise_model()
+
+    def _initialise_model(self):
         self._graphmodel = read_gpickle(self._model_dir / "GraphModel.gpickle")
         self._lambdamodel = read_pickle(self._model_dir / "LambdaModel.pickle")
         self._statsmodel = read_pickle( self._model_dir / "StatsModel.pickle")
         return self._graphmodel, self._lambdamodel, self._statsmodel
+
     def initialise_rainfall(self):
         # initialse rainfall nowcasts at_time 201605300900
         # remember to change filename to obs, or ens for other types of input e.g. obs.csv
@@ -242,16 +247,15 @@ class NowcastRunner(object):
         return rgrr_filenames, rgid_filenames
 
     def run(self):
-        root_dir = Path(r"d:\Projects\SITO-RTI\hybridurb_git\examples\Antwerp\option1")
-        t0 = '201605300900'
-        self = NowcastRunner(root_dir, t0)
 
         # initialise model
         equ = 'n_F ~ C(Cat)+NS+PS+OT+d' # FIXME: this is the place to select options, which is not idea
 
-        X, lams, model = self.initialise_model()
+        X = self._graphmodel
+        lams = self._lambdamodel
+        model = self._statsmodel
 
-        # Initialise rainfall
+        # locate rainfall
         rgrr_filenames, rgid_filenames = self.initialise_rainfall()
 
         # start
@@ -266,7 +270,7 @@ class NowcastRunner(object):
             results = pool.starmap(predict, zip(itertools.repeat(at_time),
                                                 rgrr_filenames, rgid_filenames,
                                                 itertools.repeat(X), itertools.repeat(lams), itertools.repeat(model),
-                                                itertools.repeat(equ)))
+                                                itertools.repeat(equ), itertools.repeat(str(self._output_dir))))
 
         # finish
         pr.disable()
@@ -284,4 +288,9 @@ class NowcastRunner(object):
         y_preds.to_csv(self._output_dir / f'{self.t0}_ypred_summary.csv')
 
 
+    def export_to_fews(self):
+        export_dir = self._output_dir.with_name("export")
+        export_dir.mkdir(exist_ok=True)
+        if self._graphmodel:
+            export_to_fews(self._graphmodel, export_dir)
 

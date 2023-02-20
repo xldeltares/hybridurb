@@ -24,6 +24,26 @@ def read_pickle(filename):
         p = u.load()
     return p
 
+# export to fews
+import networkx as nx
+import momepy
+import geopandas as gpd
+from pathlib import Path
+def export_to_fews(G: nx.Graph, out_dir:Path):
+
+    # export locations for fews
+    # relabeling using xy
+    mapping = {}
+    for n in G.nodes:
+        G.nodes[n]['node_name'] = n
+        mapping[n] = G.nodes[n]['geo'][:2]
+
+    _G = nx.relabel_nodes(G,mapping, copy=True)
+
+    _nodes = momepy.nx_to_gdf(_G, points = True, lines = False, spatial_weights=False)
+    _nodes[['node_name', 'nodeID', 'geometry']].to_file(Path(out_dir).joinpath('network_nodes.shp'))
+    return _nodes
+
 
 
 # drawing functions
@@ -129,4 +149,5 @@ def I_idf(T, tc):
         return sympy.nsolve(func,x,30.0)
     else:
         return sympy.nsolve(func,x,10.0)
+
 
