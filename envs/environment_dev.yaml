@@ -20,4 +20,4 @@ dependencies:
   - pytest
   - pip:
     - meshkernel==2.0.1
-    = xugrid==0.2.1
+    - xugrid==0.2.1
