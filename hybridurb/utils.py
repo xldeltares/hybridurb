@@ -29,7 +29,7 @@ import networkx as nx
 import momepy
 import geopandas as gpd
 from pathlib import Path
-def export_to_fews(G: nx.Graph, out_dir:Path):
+def export_gdf(G: nx.Graph, out_dir:Path):
 
     # export locations for fews
     # relabeling using xy
