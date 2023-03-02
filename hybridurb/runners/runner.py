@@ -19,6 +19,8 @@ import logging
 import re
 import xarray as xr
 from pathlib import Path
+from meshkernel import Mesh1d
+from xugrid import Ugrid1d
 
 logger = logging.getLogger(__name__)
 # TODO use propoer logger
@@ -280,8 +282,10 @@ def predict(rgRR, rgID, X, lams, model, equ, event_id = None):
 # TODO make it abstract class
 # FIXME this is option 1 runner
 class NowcastRunner(object):
-    def __init__(self, root_dir:Path, t0: str):
+    def __init__(self, root_dir:Path, t0: str, name:str = "", crs = "EPSG:4326"):
         self.t0 = t0
+        self.name = name
+        self.crs = crs
         self._model_dir = root_dir / 'model'
         self._input_dir = root_dir / 'input'
         self._output_dir = root_dir / 'output'
@@ -399,19 +403,20 @@ class NowcastRunner(object):
 
         Converts rainfall inputs prepared by Delft-FEWS into rainfall inputs supported by HybridUrb.
         Rainfall inputs prepared by Delft-FEWS:
-            [T0]_catchments.nc.
+            [T0]_precipitation_on_catchments.nc.
             It contains the rainfall quantity (unit mm) per rainfall catchments.
         Rainfall inputs supported by HybridUrb:
             [T0]_ens[ENSEMBLE_ID].csv and grid_to_nodes_mapping.csv.
             The former contains rainfall intensity (unit mm/h) per rainfall catchment for each ensemble member.
             The latter contains the mapping of rainfall catchments.
+            #TODO: consider to support gridded input and do idmapping internally
 
         T0 (str)  is the start time of the input, supported format: yyyymmddHHMM, e.g. 201605300900;
-        ENSEMBLE_ID (int) is the identifier of each ensemble member, known as dimension realization in [T0]_catchments.nc
+        ENSEMBLE_ID (int) is the identifier of each ensemble member, known as dimension realization in [T0]_precipitation_on_catchments.nc
         """
 
         # open input file
-        filename = self._input_dir.joinpath(f"{self.t0}_catchments.nc")
+        filename = self._input_dir.joinpath(f"{self.t0}_precipitation_on_catchments.nc")
         da = xr.open_dataset(filename)
 
         # unit conversion from mm to mm/hour
@@ -449,50 +454,60 @@ class NowcastRunner(object):
             # TODO: check if the ensemble member actually match with input
 
         T0 (str)  is the start time of the input, supported format: yyyymmddHHMM, e.g. 201605300900;
-        ENSEMBLE_ID (int) is the identifier of each ensemble member, known as dimension realization in [T0]_catchments.nc
+        ENSEMBLE_ID (int) is the identifier of each ensemble member, known as dimension realization in [T0]_precipitation_on_catchments.nc
         """
 
         # prepares output
         y_preds = pd.concat(self._outputs, axis=1)
 
-        # prepare output dimensions
-        time = [pd.to_datetime(self.t0)]
+        # prepare output
+        probability = y_preds.values
         analysis_time = pd.Timestamp(self.t0)
         realization = range(len(y_preds.columns))
-        index = range(len(y_preds.index))
 
-        # prepare output variables
-        probability = y_preds.values[np.newaxis]
-        node_id = y_preds.index.to_list()
-        node_names = node_id
+        # prepare output grid
+        node_loc = {n: i for i,n in enumerate(y_preds.index)} #FIXME for now only non-nan locations are written
+        node_x = np.array([self._graphmodel.nodes[n]['geo'][0] for n in y_preds.index])
+        node_y = np.array([self._graphmodel.nodes[n]['geo'][1] for n in y_preds.index])
+        edge_nodes = np.zeros(node_x.size * 2, np.int32)
+        edge_index = 0
+        for start_node, end_node in self._graphmodel.edges:
+            if np.logical_and(start_node in node_loc, end_node in node_loc):
+                edge_nodes[edge_index] = node_loc[start_node]
+                edge_index += 1
+                edge_nodes[edge_index] = node_loc[end_node]
+                edge_index += 1
+        mesh1d = Mesh1d(node_x, node_y, edge_nodes)
+        grid = Ugrid1d.from_meshkernel(mesh1d, name = "mesh1d") #FIXME add crs
+        grid.to_dataset().to_netcdf(self._output_dir.joinpath(f"{self.name}_grid.nc"))
+        ds = grid.to_dataset()
+        ds.mesh1d_node_x.attrs = {'units': 'm', 'standard_name': 'projection_x_coordinate', 'long_name': 'x-coordinate of mesh nodes'}
+        ds.mesh1d_node_y.attrs = {'units': 'm', 'standard_name': 'projection_y_coordinate', 'long_name': 'y-coordinate of mesh nodes'}
+        # write grid
+        ds.to_netcdf(self._output_dir.joinpath(f"{self.name}_grid.nc"))
 
-        # prepare output coords
-        x = [self._graphmodel.nodes[n]['geo'][0] for n in y_preds.index]
-        y = [self._graphmodel.nodes[n]['geo'][1] for n in y_preds.index]
+        # time dimension
+        ds.coords["analysis_time"] = xr.DataArray([analysis_time], dims=["analysis_time"])
+        ds.analysis_time.attrs = {'standard_name': 'forecast_reference_time', 'long_name': 'forecast_reference_time'}
+        ds.coords["time"] = xr.DataArray(pd.date_range(start = analysis_time, freq = "5T", periods = 2), dims=["time"])
+        ds.time.attrs = {'standard_name': 'time', 'long_name': 'time', 'axis': 'T'}
 
-        # export to fews
-        nodes = export_to_fews(self._graphmodel, self._output_dir)
+        # data variable
+        # use realization (NOTE: this is the desirable option which is not yet supported by FEWS)
+        ds.coords["realization"] = xr.DataArray(realization, dims=["realization"])
+        ds.realization.attrs = {'standard_name': 'realization', 'long_name': 'Index of an ensemble member within an ensemble', 'units': '1'}
+        ds["mesh1d_probability"] = xr.DataArray(np.stack([probability.T, probability.T]), dims=["time", "realization", grid.node_dimension])
+        ds.mesh1d_probability.attrs = {'mesh': 'mesh1d', 'location': 'node', 'standard_name': 'thunderstorm_probability', 'long_name': 'Probability of flooding',
+         'units': '1', 'grid_mapping': ''}
+        ds.to_netcdf(self._output_dir.joinpath(f"{self.t0}_predictions_at_nodes_ensemble.nc"))
 
-        # instantiate xr.DataArray for output data
-        da_out = xr.Dataset(
-            data_vars=dict(
-                probability = (["time", "index", "realization"], probability),
-                node_id = (["index"], node_id),
-                node_names =(["index"], node_names),
-            ),
-            coords=dict(
-                index = index,
-                time=time,
-                analysis_time=analysis_time,
-                realization = realization,
-                x = (["index"], x),
-                y = (["index"], y),
-            ),
-            attrs=dict(
-                source="Generated by HybridUrb post-adaptor for Delft-FEWS",
-            ),
-        )
-        da_out.to_netcdf(self._output_dir.joinpath(f"{self.t0}_predictions_at_nodes.nc"))
+        # do not use realization, run in loop. (NOTE deprecate this when the above becomes supported).
+        for r in realization:
+            ds["mesh1d_probability"] = xr.DataArray(np.stack([probability[:,r], probability[:,r]]), dims=["time", grid.node_dimension])
+            ds.mesh1d_probability.attrs = {'mesh': 'mesh1d', 'location': 'node', 'standard_name': 'thunderstorm_probability', 'long_name': 'Probability of flooding',
+             'units': '1', 'grid_mapping': ''}
+            ds.to_netcdf(self._output_dir.joinpath(f"{self.t0}_predictions_at_nodes_{r}.nc"))
+
 
     def run_fews(self):
 
@@ -510,45 +525,3 @@ class NowcastRunner(object):
         print(f'Starting postadaptor for fews')
         self.run_postadaptor()
         print(f'Finished postadaptor for fews')
-
-
-    def export_to_fews(self):
-        export_dir = self._output_dir.with_name("export")
-        export_dir.mkdir(exist_ok=True)
-        if self._graphmodel:
-            export_to_fews(self._graphmodel, export_dir)
-
-
-# class NowcastRunnerFews(NowcastRunner):
-#     def __init__(self, *args, **kwargs):
-#         super().__init__(*args, **kwargs)
-#
-#     def _initialise_rainfall(self):
-#         # initialse rainfall nowcasts at_time 201605300900
-#
-#         # open input file
-#         filename = self._input_dir.joinpath(f"{self.t0}_catchments.nc")
-#         da = open_raster(filename)
-#
-#         # unit conversion from mm to mm/hour
-#         dt_s = (da.time.values[1]-da.time.values[0]).astype('timedelta64[s]').astype(np.int32)
-#         da.assign(I_fc=lambda x: x.P_fc / dt_s * 3600)
-#         self._inputs = da
-#
-#         # an event per ensemble member
-#         events = []
-#         _station_ids = da["station_id"].values.astype(str).tolist()
-#         for realisation in da["realization"].values:
-#             # slice data
-#             di = da["I_fc"].sel(realization = realisation, drop  = True).drop_vars(['lat', 'lon'])
-#             # format dataframe
-#             df = di.to_dataframe()["I_fc"].unstack(level=1)
-#             df.columns = _station_ids
-#             events.append(df)
-#
-#         return events
-#
-#
-#
-#
-#
