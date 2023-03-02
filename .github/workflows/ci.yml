@@ -23,15 +23,6 @@ jobs:
         environment-file: envs/environment_dev.yaml
         activate-environment: hybridurb-dev
         auto-activate-base: false
-    
-    - name: Conda info
-      run: |
-       conda info
-       conda list
-      
-    - uses: Gr1N/setup-poetry@v8
-      with:
-        poetry-version: "1.4.0"
       
     - name: Install Dependencies
       run: poetry install
