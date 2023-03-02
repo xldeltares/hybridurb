@@ -16,11 +16,13 @@ from hybridurb.runners import NowcastRunner
 @click.argument("root_dir", type=click.Path(exists=True, resolve_path=True, dir_okay=True, file_okay=False))
 @click.option("--mode", type = str, default=None, help="Mode of the run: hindcast (not implemented), nowcast")
 @click.option("--t0",  type = str, default=None, help="T0 of the run (%Y%m%d%H%M)")
+@click.option("--name",  type = str, default=None, help="name of the model. ")
+@click.option("--crs",  type = str, default=None, help="crs of the model. If not specified, use EPSG:4326")
 @click.option("--fews",  type = bool, default=False,  is_flag=True, help=
     "Run within FEWS. Include exporting MayLayerFiles for Delft-FEWS." +
     "If True, support input format: T0_catchemnts.nc" +
     "If False, support input format: T0_ens*.csv")
-def run(root_dir: str, mode:str = None, t0: str = None, fews: bool = False):
+def run(root_dir: str, mode:str = None, t0: str = None, name:str = "", crs:str = "EPSG:4326", fews: bool = False):
     click.echo(f"run HybridUrb using the following arguments: {root_dir} --mode {mode} --t0 {t0} --fews {fews}")
     def _as_path(my_dir: str) -> Optional[Path]:
         if not my_dir:
@@ -46,7 +48,7 @@ def run(root_dir: str, mode:str = None, t0: str = None, fews: bool = False):
     _my_t0 = _as_datetime(t0)
 
     if mode == 'nowcast':
-        _runner = NowcastRunner(root_dir=root_dir, t0=t0)
+        _runner = NowcastRunner(root_dir=root_dir, t0=t0, name=name, crs=crs)
         if fews is True:
             _runner.run_fews()
         else:
