@@ -13,5 +13,5 @@ dependencies:
   - statsmodels=0.13.5
   - momepy=0.5.4
   - pip:
-    - meshkernel=2.0.1
-    - xugrid=0.2.1
+    - meshkernel==2.0.1
+    - xugrid==0.2.1
