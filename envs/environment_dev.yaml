@@ -6,3 +6,4 @@ dependencies:
   - pip
   - poetry
   - gdal=3.6.1
+  - charset-normalizer=3.0.1
