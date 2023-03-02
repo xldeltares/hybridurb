@@ -19,7 +19,7 @@ jobs:
         miniforge-variant: Mambaforge
         channels: conda-forge, defaults
         channel-priority: strict
-        environment-file: environment.yml
+        environment-file: environment.yaml
         activate-environment: hybridurb
 
     - name: Conda info
