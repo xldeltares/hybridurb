@@ -5,6 +5,8 @@ dependencies:
   - python=3.8.*
   - pip
   - poetry
+  - numpy=1.23.5
+  - gdal=3.6.1
   - networkx=3.0
   - hydromt=0.6.0
   - pytest=7.2.1
@@ -12,9 +14,10 @@ dependencies:
   - sympy=1.11.1
   - statsmodels=0.13.5
   - momepy=0.5.4
+  - matplotlib=3.7.0
   - isort
   - black
   - pytest
   - pip:
     - meshkernel==2.0.1
-    - xugrid==0.2.1
+    = xugrid==0.2.1
