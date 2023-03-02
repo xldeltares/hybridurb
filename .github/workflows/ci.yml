@@ -3,7 +3,7 @@ name: Python Package using Conda
 on: [push]
 
 jobs:
-  build-linux:
+  build:
     runs-on: ${{ matrix.os }}
     defaults:
       run:
