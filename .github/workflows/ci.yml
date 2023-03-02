@@ -1,4 +1,4 @@
-name: Python Package using Conda
+name: CI
 
 on: [push]
 
@@ -6,6 +6,9 @@ jobs:
   Test:
     name: ${{ matrix.os }} - py${{ matrix.python-version }}
     runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash -l {0}
     strategy:
       fail-fast: false
       matrix:
@@ -13,14 +16,17 @@ jobs:
         os: [windows-latest]
     
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v2
     - uses: conda-incubator/setup-miniconda@v2
       with:
         python-version: ${{ matrix.python-version }}
-        channels: conda-forge
-        channel-priority: true
+        mamba-version: "*"
+        channels: conda-forge, defaults
+        channel-priority: strict
         environment-file: envs/environment_dev.yaml
-        activate-environment: hybridurb
+        activate-environment: hybridurb-dev
+        auto-activate-base: false
+    
     - name: Conda info
       run: |
        conda info
