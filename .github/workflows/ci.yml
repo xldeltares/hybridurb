@@ -16,13 +16,16 @@ jobs:
         os: [windows-latest]
     
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - uses: conda-incubator/setup-miniconda@v2
       with:
         python-version: ${{ matrix.python-version }}
         environment-file: envs/environment_dev.yaml
         activate-environment: hybridurb-dev
         auto-activate-base: false
+        
+    - name: Conda list
+      run: conda list
       
     - name: Install Dependencies
       run: poetry install
