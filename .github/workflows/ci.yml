@@ -4,12 +4,15 @@ on: [push]
 
 jobs:
   build-linux:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     defaults:
       run:
         shell: bash -l {0}
     strategy:
       max-parallel: 5
+      matrix:
+        python-version: [3.8]
+        os: [ubuntu-latest, windows-latest]
 
     steps:
     - uses: actions/checkout@v3
@@ -19,8 +22,8 @@ jobs:
         miniforge-variant: Mambaforge
         channels: conda-forge, defaults
         channel-priority: strict
-        environment-file: environment.yaml
-        activate-environment: hybridurb
+        environment-file: envs/environment_dev.yaml
+        activate-environment: hybridurb-dev
 
     - name: Conda info
       run: |
@@ -34,13 +37,13 @@ jobs:
     #- name: Test with pytest
     #  run: poetry run pytest
 
-    #- name: Autoformat 
-    #  if: ${{ (matrix.os == 'windows-latest') && (matrix.python-version == 3.8) }}
-    #  run: |
-    #    python -m isort .
-    #    python -m black .
-    #    git config --global user.name '${{ github.actor }}'
-    #    git config --global user.email '${{ github.actor }}@users.noreply.github.com'
-    #    git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY
-    #    git checkout $GITHUB_HEAD_REF
-    #    git commit -am "autoformat: isort & black" && git push || true
+    - name: Autoformat 
+      if: ${{ (matrix.os == 'windows-latest') && (matrix.python-version == 3.8) }}
+      run: |
+        python -m isort .
+        python -m black .
+        git config --global user.name '${{ github.actor }}'
+        git config --global user.email '${{ github.actor }}@users.noreply.github.com'
+        git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY
+        git checkout $GITHUB_HEAD_REF
+        git commit -am "autoformat: isort & black" && git push || true
