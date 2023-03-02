@@ -1,4 +1,4 @@
-name: hybridurb
+name: hybridurb-dev
 channels:
   - conda-forge
 dependencies:
