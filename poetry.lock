@@ -782,6 +782,26 @@ files = [
 ]
 
 [[package]]
+name = "meshkernel"
+version = "2.0.1"
+description = "`meshkernel` is a library which can be used to manipulate meshes."
+category = "main"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "meshkernel-2.0.1-py3-none-win_amd64.whl", hash = "sha256:d17487a16a211e6775d6eeadc50bd3c8ea81e39b9a8c6d49fc59512a9a967992"},
+    {file = "meshkernel-2.0.1.tar.gz", hash = "sha256:7efa64ce2f6ec7e4783f38fbcfc49b456a0a8dc0049bf0476b5e1b95805126d0"},
+]
+
+[package.dependencies]
+numpy = "*"
+
+[package.extras]
+docs = ["myst-nb", "sphinx", "sphinx-book-theme"]
+lint = ["black", "flake8", "isort"]
+tests = ["matplotlib", "nbval", "pytest", "pytest-cov"]
+
+[[package]]
 name = "momepy"
 version = "0.5.4"
 description = "Urban Morphology Measuring Toolkit"
@@ -939,6 +959,25 @@ importlib-metadata = {version = "*", markers = "python_version < \"3.9\""}
 llvmlite = ">=0.39.0dev0,<0.40"
 numpy = ">=1.18,<1.24"
 setuptools = "*"
+
+[[package]]
+name = "numba-celltree"
+version = "0.1.6"
+description = "Cell Tree Spatial Index"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "numba_celltree-0.1.6.tar.gz", hash = "sha256:2bfc722e0e039e73ac04c3cd7151309c12f57f1d7d9b68fbc206aeb0d0ce665b"},
+]
+
+[package.dependencies]
+numba = "*"
+numpy = "*"
+
+[package.extras]
+all = ["matplotlib"]
+docs = ["matplotlib", "pydata-sphinx-theme", "sphinx", "sphinx-gallery"]
 
 [[package]]
 name = "numcodecs"
@@ -1152,6 +1191,28 @@ files = [
 [package.extras]
 dev = ["pre-commit", "tox"]
 testing = ["pytest", "pytest-benchmark"]
+
+[[package]]
+name = "pooch"
+version = "1.7.0"
+description = "\"Pooch manages your Python library's sample data files: it automatically downloads and stores them in a local directory, with support for versioning and corruption checks.\""
+category = "main"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "pooch-1.7.0-py3-none-any.whl", hash = "sha256:74258224fc33d58f53113cf955e8d51bf01386b91492927d0d1b6b341a765ad7"},
+    {file = "pooch-1.7.0.tar.gz", hash = "sha256:f174a1041b6447f0eef8860f76d17f60ed2f857dc0efa387a7f08228af05d998"},
+]
+
+[package.dependencies]
+packaging = ">=20.0"
+platformdirs = ">=2.5.0"
+requests = ">=2.19.0"
+
+[package.extras]
+progress = ["tqdm (>=4.41.0,<5.0.0)"]
+sftp = ["paramiko (>=2.7.0)"]
+xxhash = ["xxhash (>=1.4.3)"]
 
 [[package]]
 name = "pyflwdir"
@@ -1880,6 +1941,30 @@ parallel = ["dask[complete]"]
 viz = ["matplotlib", "nc-time-axis", "seaborn"]
 
 [[package]]
+name = "xugrid"
+version = "0.2.1"
+description = "Xarray extension for unstructured grids"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "xugrid-0.2.1.tar.gz", hash = "sha256:cd493c880c4fef71af5850a25480266ebb1a7d66403c290775ffaaa0753f6758"},
+]
+
+[package.dependencies]
+numba = "*"
+numba_celltree = "*"
+numpy = "*"
+pandas = "*"
+pooch = "*"
+scipy = "*"
+xarray = "*"
+
+[package.extras]
+all = ["geopandas", "matplotlib", "meshkernel", "netcdf4", "pooch", "pygeos", "pyproj", "zarr"]
+docs = ["geopandas", "matplotlib", "meshkernel", "netcdf4", "pooch", "pydata-sphinx-theme", "pygeos", "pyproj", "sphinx", "sphinx-gallery", "zarr"]
+
+[[package]]
 name = "zarr"
 version = "2.14.1"
 description = "An implementation of chunked, compressed, N-dimensional arrays for Python"
@@ -1919,4 +2004,4 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 [metadata]
 lock-version = "2.0"
 python-versions = "~3.8"
-content-hash = "18ed6a6e7e5accaff55037ef9563aaf141c818c202252f418c8169665090292e"
+content-hash = "c9842c471b912cb08995402e4bdd6db6dd408f3cc1fcd23fecd7f3c7bded9579"

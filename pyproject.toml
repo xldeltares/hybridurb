@@ -15,6 +15,8 @@ scikit-learn = "1.2.0"
 sympy = "1.11.1"
 statsmodels = "0.13.5"
 momepy = "0.5.4"
+meshkernel = "2.0.1"
+xugrid = "0.2.1"
 
 
 [build-system]
