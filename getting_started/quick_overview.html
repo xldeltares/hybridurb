@@ -1,0 +1,166 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Quick overview &#8212; HybridUrb 0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Installation guide" href="installation.html" />
+    <link rel="prev" title="Getting started" href="intro.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="quick-overview">
+<span id="id1"></span><h1>Quick overview<a class="headerlink" href="#quick-overview" title="Permalink to this heading">¶</a></h1>
+<section id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this heading">¶</a></h2>
+<p>HybridUrb is a python package to build and run simplified 1D models for urban flood nowcasting using hybrid method proposed by <a class="reference external" href="https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2019WR025128">Li &amp; Willems (2022)</a>.
+HybridUrb is a package under development. The current version only support using the package to run a pre-calibrated HybridUrb model in nowcast mode.</p>
+</section>
+<section id="example">
+<h2>Example<a class="headerlink" href="#example" title="Permalink to this heading">¶</a></h2>
+<section id="install-hybridurb">
+<h3>Install HybridUrb<a class="headerlink" href="#install-hybridurb" title="Permalink to this heading">¶</a></h3>
+<p>For now HybridUrb only support developer install in <a class="reference internal" href="../dev/dev_install.html#dev-install"><span class="std std-ref">Developer install</span></a>.</p>
+<p>To check if the installation was successful by running the command below.
+This returns the available arguments for HybridUrb.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>conda<span class="w"> </span>activate<span class="w"> </span>hybridurb-dev
+<span class="gp">$ </span>python<span class="w"> </span>-m<span class="w"> </span>hybridurb.runners.main<span class="w"> </span>--help
+
+<span class="go">&gt;&gt;  Usage: python -m hybridurb.runners.main [OPTIONS] ROOT_DIR</span>
+
+<span class="go">    Options:</span>
+<span class="go">      --mode TEXT  Mode of the run: hindcast (not implemented), nowcast</span>
+<span class="go">      --t0 TEXT    T0 of the run (%Y%m%d%H%M)</span>
+<span class="go">      --name TEXT  name of the model.</span>
+<span class="go">      --crs TEXT   crs of the model. If not specified, use EPSG:4326</span>
+<span class="go">      --fews       Run within FEWS. Include exporting MayLayerFiles for Delft-</span>
+<span class="go">                   FEWS. If True, support input format: [t0]_catchemnts.nc. If False,</span>
+<span class="go">                   support input format: [t0]_ens*.csv</span>
+<span class="go">      --help       Show this message and exit.</span>
+</pre></div>
+</div>
+</section>
+<section id="build-a-model">
+<h3>Build a model<a class="headerlink" href="#build-a-model" title="Permalink to this heading">¶</a></h3>
+<p>Not yet implemented.</p>
+</section>
+<section id="run-a-model">
+<h3>Run a model<a class="headerlink" href="#run-a-model" title="Permalink to this heading">¶</a></h3>
+<p>Run the Antwerp model in nowcast mode using nowcasts produced at 201605300900:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python<span class="w"> </span>-m<span class="w"> </span>hybridurb.runners.main<span class="w"> </span>.<span class="se">\e</span>xamples<span class="se">\A</span>ntwerp<span class="se">\o</span>ption1<span class="w"> </span>--mode<span class="w"> </span>nowcast<span class="w"> </span>--t0<span class="w"> </span><span class="m">201605300900</span>
+</pre></div>
+</div>
+</section>
+<section id="run-a-model-in-delft-fews">
+<h3>Run a model in Delft-FEWS<a class="headerlink" href="#run-a-model-in-delft-fews" title="Permalink to this heading">¶</a></h3>
+<p>Run a model in <a class="reference external" href="https://oss.deltares.nl/web/delft-fews&gt;">Delft-FEWS</a> context involves running also the pre- and post-adaptor (example not enclosed):</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python<span class="w"> </span>-m<span class="w"> </span>hybridurb.runners.main<span class="w"> </span>.<span class="se">\e</span>xamples<span class="se">\A</span>ntwerp<span class="se">\o</span>ption1<span class="w"> </span>--mode<span class="w"> </span>nowcast<span class="w"> </span>--t0<span class="w"> </span><span class="m">201605300900</span><span class="w"> </span>--fews
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">HybridUrb</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="intro.html">Getting started</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Quick overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html">Installation guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="publications.html">Publications</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/intro.html">User guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples_index.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dev/intro.html">Developments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API reference</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="intro.html">Getting started</a><ul>
+      <li>Previous: <a href="intro.html" title="previous chapter">Getting started</a></li>
+      <li>Next: <a href="installation.html" title="next chapter">Installation guide</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2023, Xiaohan Li.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 6.1.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="../_sources/getting_started/quick_overview.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
