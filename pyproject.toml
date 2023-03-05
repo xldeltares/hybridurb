@@ -3,7 +3,7 @@ name = "hybridurb"
 version = "0.1.0"
 description = "HybridUrb is a Python package to perform hybird urban flood modelling using the methodology proposed in Li & Willems (2020)."
 authors = ["xiaohan.li-deltares <xiaohan.li@deltares.nl>"]
-readme = "README.md"
+readme = "README.rst"
 
 [tool.poetry.dependencies]
 python = "~3.8"
