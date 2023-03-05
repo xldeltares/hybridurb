@@ -1,0 +1,58 @@
+name: Build Docs
+
+on:
+  push:
+    branches: [ docs ]
+
+jobs:
+  Docs:
+    name: linux docs
+    runs-on: ${{ matrix.os }}
+    env:
+      DOC_VERSION: dev
+    defaults:
+      run:
+        shell: bash -l {0}
+    strategy:
+      max-parallel: 5
+      matrix:
+        python-version: [3.8]
+        os: [ubuntu-latest, windows-latest]
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: conda-incubator/setup-miniconda@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+        miniforge-variant: Mambaforge
+        channels: conda-forge, defaults
+        channel-priority: strict
+        environment-file: envs/environment_dev.yaml
+        activate-environment: hybridurb-dev
+
+    - name: Conda info
+      run: |
+       conda info
+       conda list
+     
+    - name: HybridUrb
+      run: |
+        python -m pip install .
+
+    - name: Build docs
+      run: |
+        pushd docs
+        make html
+        popd
+    - name: Set doc version
+      # run: echo "DOC_VERSION=preview" >> $GITHUB_ENV
+      run: echo "DOC_VERSION=$(python -c 'from hybridurb import __version__ as v; print("dev" if "dev" in v else "v"+v.replace(".dev",""))')" >> $GITHUB_ENV
+
+    - name: Upload to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3.8.0
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./docs/build/html
+        destination_dir: ./${{ env.DOC_VERSION }}
+        keep_files: false
+        full_commit_message: Deploy ${{ env.DOC_VERSION }} to GitHub Pages
