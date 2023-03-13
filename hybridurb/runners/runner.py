@@ -219,7 +219,7 @@ def _predict(at_time, rgrr_filename, rgid_filename, X, lams, model, equ, output_
 
     return y_pred # TODO: support ft output
 
-def predict(rgRR, rgID, X, lams, model, equ, event_id = None):
+def predict(rgRR, rgID, event_id, X, lams, model, equ):
     """
     Predict the probability of flooding for a given rainfall event `rgRR`.
 
@@ -377,7 +377,7 @@ class NowcastRunner(object):
 
         # predict
         with Pool(processes=4) as pool:
-            results = pool.starmap(predict, zip(rgRR_list, rgID_list,
+            results = pool.starmap(predict, zip(rgRR_list, rgID_list, event_list,
                                                 itertools.repeat(X), itertools.repeat(lams), itertools.repeat(model),
                                                 itertools.repeat(equ)))
 
@@ -394,7 +394,6 @@ class NowcastRunner(object):
 
         # write output
         y_preds = pd.concat(results, axis=1)
-        y_preds.columns = list(range(total_sims))
         y_preds.to_csv(self._output_dir / f'{self.t0}_ypred_summary.csv')
 
     def run_preadaptor(self):
@@ -463,7 +462,7 @@ class NowcastRunner(object):
         # prepare output
         probability = y_preds.values
         analysis_time = pd.Timestamp(self.t0)
-        realization = range(len(y_preds.columns))
+        realization = [int(i) for i in y_preds.columns]
 
         # prepare output grid
         node_loc = {n: i for i,n in enumerate(y_preds.index)} #FIXME for now only non-nan locations are written
