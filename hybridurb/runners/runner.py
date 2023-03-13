@@ -268,10 +268,10 @@ def _predict(
         plt.savefig(rgrr_filename + "_ypred.png")
         print(f"\thazard map saved")
 
-    return y_pred # TODO: support ft output
+    return y_pred  # TODO: support ft output
+
 
 def predict(rgRR, rgID, event_id, X, lams, model, equ):
-
     """
     Predict the probability of flooding for a given rainfall event `rgRR`.
 
@@ -333,7 +333,7 @@ def predict(rgRR, rgID, event_id, X, lams, model, equ):
     if event_id is not None:
         y_pred.columns = [event_id]
 
-    return y_pred # TODO: support ft output
+    return y_pred  # TODO: support ft output
 
 
 # TODO make it abstract class
