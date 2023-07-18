@@ -1,9 +1,10 @@
-from hydrolib.core.rr import RainfallRunoffModel
-from hydrolib.core.rr.topology.parser import NetworkTopologyFileParser
 from pathlib import Path
+
+import geopandas as gpd
 import numpy as np
 import pandas as pd
-import geopandas as gpd
+from hydrolib.core.rr import RainfallRunoffModel
+from hydrolib.core.rr.topology.parser import NetworkTopologyFileParser
 
 
 # define customised parser for parsing nwrw location model (hydrolib-core)
