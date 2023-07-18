@@ -1,6 +1,7 @@
-from hydromt_delft3dfm import DFlowFMModel
-import geopandas as gpd
 from pathlib import Path
+
+import geopandas as gpd
+from hydromt_delft3dfm import DFlowFMModel
 
 
 # define a FN model (hybridurb)
