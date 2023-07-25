@@ -2,29 +2,27 @@
 from __future__ import annotations
 
 import glob
-from os.path import join, basename, isfile
-from pathlib import Path
-import logging
-import matplotlib.pyplot as plt
-
-import numpy as np
-import networkx as nx
-from rasterio.warp import transform_bounds
-import pyproj
-import pandas as pd
-import geopandas as gpd
-from shapely.geometry import box
-import xarray as xr
-from collections import Counter
 import itertools
+import logging
+from collections import Counter
+from os.path import basename, isfile, join
+from pathlib import Path
 
+import geopandas as gpd
 import hydromt
+import matplotlib.pyplot as plt
+import networkx as nx
+import numpy as np
+import pandas as pd
+import pyproj
+import xarray as xr
+from hydromt import gis_utils, io, raster
 from hydromt.models.model_api import Model
-from hydromt import gis_utils, io
-from hydromt import raster
+from rasterio.warp import transform_bounds
+from shapely.geometry import box
 
-from .workflows import *
 from . import DATADIR
+from .workflows import *
 
 __all__ = ["NetworkModel"]
 logger = logging.getLogger(__name__)
