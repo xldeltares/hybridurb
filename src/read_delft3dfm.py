@@ -4,13 +4,13 @@ from typing import Optional
 
 import geopandas as gpd
 import numpy as np
-from hydromt_delft3dfm import DFlowFMModel
 from pyproj import CRS
 
-from delft3dfm_utils import Delft3DFMConverter, Delft3dFMReader
+from delft3dfm_utils import Delft3DFM
 
 # Define the root path where the project files are located
 root = Path(r"c:\Projects\2023\SITO urban\delft3dfm\dimr_export")
+out_dir = root.joinpath("hybridurb")
 
 # Define the filename of the Rainfall Runoff Model
 mdu_fn = "dflowfm\FlowFM.mdu"
@@ -20,10 +20,11 @@ mdu = root / mdu_fn
 region = gpd.read_file(
     r"c:\Projects\2023\SITO urban\delft3dfm\dimr_export\geoms\clip_region.shp"
 )
-# extract geometries from model
-model = Delft3dFMReader(mdu, crs=28992)
-geometries = model.extract_geometries(region=region)
 
-# Convert
-convertor = Delft3DFMConverter()
-geometries_converted = convertor.convert(geometries=geometries)
+
+# extract geometries from model
+model = Delft3DFM()
+model.read_model(mdu, crs=28992)
+model.extract_geometries(region=region)
+model.convert_geometries()
+model.save_geometries(out_dir)
