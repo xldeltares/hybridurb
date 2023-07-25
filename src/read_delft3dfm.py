@@ -1,12 +1,13 @@
+import logging
 from pathlib import Path
 from typing import Optional
-import logging
+
 import geopandas as gpd
+import numpy as np
 from hydromt_delft3dfm import DFlowFMModel
 from pyproj import CRS
-import numpy as np
-from delft3dfm_utils import Delft3dFMReader, Delft3DFMConverter
 
+from delft3dfm_utils import Delft3DFMConverter, Delft3dFMReader
 
 # Define the root path where the project files are located
 root = Path(r"c:\Projects\2023\SITO urban\delft3dfm\dimr_export")

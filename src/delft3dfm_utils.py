@@ -1,10 +1,11 @@
+import logging
 from pathlib import Path
 from typing import Optional
-import logging
+
 import geopandas as gpd
+import numpy as np
 from hydromt_delft3dfm import DFlowFMModel
 from pyproj import CRS
-import numpy as np
 
 logger = logging.getLogger()
 
