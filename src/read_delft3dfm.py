@@ -9,8 +9,8 @@ from pyproj import CRS
 from delft3dfm_utils import Delft3DFM
 
 # Define the root path where the project files are located
-root = Path(r"c:\Projects\2023\SITO urban\delft3dfm\dimr_export")
-out_dir = root.joinpath("hybridurb")
+root = Path(r"c:\Developments\hybridurb\data\Eindhoven\Delft3DFM")
+out_dir = root.joinpath("../Model Building")
 
 # Define the filename of the Rainfall Runoff Model
 mdu_fn = "dflowfm\FlowFM.mdu"

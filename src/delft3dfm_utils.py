@@ -3,9 +3,10 @@ from pathlib import Path
 from typing import Optional
 
 import geopandas as gpd
-import numpy as np
 from hydromt_delft3dfm import DFlowFMModel
 from pyproj import CRS
+
+from hydraulics_utils import HydraulicUtils
 
 logger = logging.getLogger()
 
@@ -81,9 +82,9 @@ class Delft3DFM:
         Returns:
         dict: A dictionary containing the converted geometries.
         """
-        _geometries = self.geometries
+        _geometries = self.geometries.copy()
         geometries = {}
-        _crosssections = geometries.pop("crosssections")  # part of branches
+        _crosssections = _geometries.pop("crosssections")  # part of branches
         for name, gdf in _geometries.items():
             if name == "network_edges":
                 geometries[name] = self.convert_edges(gdf)
@@ -91,7 +92,7 @@ class Delft3DFM:
                 geometries[name] = self.convert_nodes(gdf)
             elif name == "branches":
                 geometries[name] = self.convert_branches(
-                    branches=geometries["branches"],
+                    branches=gdf,
                     crosssections=_crosssections,
                 )
             elif name == "manholes":
@@ -157,57 +158,131 @@ class Delft3DFM:
         gpd.GeoDataFrame, optional: GeoDataFrame containing the converted branches geometries.
         """
 
-        def _calculate_flow_area(row):
-            if row.shape == "rectangle":
-                return row.width * row.length
-            elif row.shape == "circle":
-                return np.pi * row.diameter**2
-            elif row.shape == "zw":
-                return Delft3DFM.calculate_zw_flow_area(row.levels, row.flowwidths)
+        def _calculate_area(row):
+            if row.type == "rectangle":
+                return HydraulicUtils.calculate_rectangle_area(row.height, row.width)
+            elif row.type == "circle":
+                return HydraulicUtils.calculate_circle_area(row.diameter)
+            elif row.type == "zw":
+                return HydraulicUtils.calculate_zw_flow_area(row.levels, row.flowwidths)
 
-        _supported_branch_types = ["pipe", "sewerconnection"]
+        def _calculate_perimeter(row):
+            if row.type == "rectangle":
+                return HydraulicUtils.calculate_rectangle_perimeter(
+                    row.height, row.width
+                )
+            elif row.type == "circle":
+                return HydraulicUtils.calculate_circle_perimeter(row.diameter)
+            elif row.type == "zw":
+                return HydraulicUtils.calculate_zw_perimeter(
+                    row.levels, row.flowwidths, row.closed
+                )
+
+        def _get_shift_at_chainage_begin(df):
+            # first, find the index of the minimum chainage for each branchid
+            idx = df.groupby("branchid")["chainage"].idxmin()
+
+            # then, create a lookup dataframe with minimum chainage shift values for each branchid
+            lookup_df = df.loc[idx, ["branchid", "shift"]].set_index("branchid")
+            return df["branchid"].map(lookup_df["shift"])
+
+        def _get_shift_at_chainage_end(df):
+            # first, find the index of the maximum chainage for each branchid
+            idx = df.groupby("branchid")["chainage"].idxmax()
+
+            # then, create a lookup dataframe with maximum chainage shift values for each branchid
+            lookup_df = df.loc[idx, ["branchid", "shift"]].set_index("branchid")
+            return df["branchid"].map(lookup_df["shift"])
+
+        _supported_branch_types = ["pipe"]
         if not branches["branchtype"].isin(_supported_branch_types).any():
             logger.warning(f"branches only support {_supported_branch_types}")
             branches = branches.loc[
                 branches["branchtype"].isin(_supported_branch_types), :
             ]
+            crosssections = crosssections[
+                crosssections["crsloc_branchid"].isin(branches["branchid"])
+            ]
 
+        _supported_crossection_shapes = ["circle", "rectangle", "zw"]
+        if not set(crosssections["crsdef_type"].unique()).issubset(
+            set(_supported_crossection_shapes)
+        ):
+            logger.warning(
+                f"crossections other than {_supported_crossection_shapes} are not supported."
+            )
+            crosssections = crosssections.loc[
+                crosssections["crsdef_type"].isin(_supported_crossection_shapes), :
+            ]
+
+        _supported_roughness_types = ["WhiteColebrook"]
+        if not set(crosssections["frictiontype"].unique()).issubset(
+            set(_supported_roughness_types)
+        ):
+            logger.warning(
+                f"crossections other than {_supported_roughness_types} are not supported."
+            )
+            crosssections = crosssections.loc[
+                crosssections["frictiontype"].isin(_supported_roughness_types),
+                :,
+            ]
+        branches = branches[branches["branchid"].isin(crosssections["crsloc_branchid"])]
+
+        if branches.empty or crosssections.empty:
+            return None
+
+        # preprocess crossections
         crosssections.rename(
             columns={c: c[7:] for c in crosssections.columns if c.startswith("crs")},
             inplace=True,
         )
-        _supported_crossection_shapes = ["circle", "rectangle", "zw"]
-        if not set(crosssections["type"].unique()).issubset(
-            set(_supported_crossection_shapes)
-        ):
-            raise NotImplementedError(
-                f"crossections other than {_supported_crossection_shapes} are not supported."
-            )
-
-        if branches.empty or crosssections.empty:
-            return None
+        # FIXME: assumes always at the beginning and end
+        crosssections["invlev_up"] = _get_shift_at_chainage_begin(crosssections)
+        crosssections["invlev_dn"] = _get_shift_at_chainage_end(crosssections)
 
         # Add crosssections to branches
         branches = branches[["branchid", "branchtype", "geometry"]].merge(
             crosssections.drop(columns="geometry"), on="branchid"
         )
-
-        branches["flowarea"] = branches.apply(_calculate_flow_area, axis=1)
+        # FIXME: do I need to remove the crossections that are none for friction?
+        # add static parameters
         branches["length"] = branches.geometry.length
-        branches.loc[branches["chainage"] == 0, "invlev_up"] = branches.loc[
-            branches["chainage"] == 0, "shift"
-        ]
-        branches.loc[branches["chainage"] != 0, "invlev_dn"] = branches.loc[
-            branches["chainage"] != 0, "shift"
-        ]
+        branches["area"] = branches.apply(_calculate_area, axis=1)
+        branches["perimeter"] = branches.apply(_calculate_perimeter, axis=1)
         branches["gradient"] = (
             branches["invlev_dn"] - branches["invlev_up"]
         ) / branches["length"]
+        # TODO: move these to network computation --> because of needing upstream downstream information
+        # calculate hydraulic parameters (dynamic)
+        # branches["hydraulic_diameter"] = branches.apply(
+        #     lambda x: HydraulicUtils.calculate_hydraulic_diameter(x.area, x.perimeter)
+        # )
 
-        # TODO: calculate capacity
-        # TODO: calculate roughness
-        # TODO: add branchtype
+        # branches["velocity"] = branches.apply(
+        #     lambda x: HydraulicUtils.calculate_velocity(
+        #         hydraulic_diameter=x.hydraulic_diameter,
+        #         hydraulic_gradient=x.gradient,
+        #         roughness_coefficient=x.frictionvalue,
+        #     )
+        # )  # FIXME gradient can be 0
+        # branches["capacity"] = branches.apply(
+        #     lambda x: HydraulicUtils.calculate_capcity(x.velocity, x.area)
+        # )
+        # branches["reynolds_number"] = branches.apply(
+        #     lambda x: HydraulicUtils.calculate_capcity(x.velocity, x.hydraulic_diameter)
+        # )
+        # branches["friction_factor"] = branches.apply(
+        #     lambda x: HydraulicUtils.calculate_friction_factor(
+        #         x.reynolds_number, x.frictionvalue, x.hydraulic_diameter
+        #     )
+        # )
+        # branches["head_loss"] = branches.apply(
+        #     lambda x: HydraulicUtils.calculate_head_loss(
+        #         x.friction_factor, x.velocity, x.length, x.hydraulic_diameter
+        #     )
+        # )
 
+        # add edgeid
         branches["edgeid"] = branches["branchid"]
 
         return branches[
@@ -215,9 +290,12 @@ class Delft3DFM:
                 "edgeid",
                 "branchid",
                 "branchtype",
-                "flowarea",
+                "area",
+                "perimeter",
                 "length",
                 "gradient",
+                "invlev_up",
+                "invlev_dn",
                 "geometry",
             ]
         ]
@@ -241,41 +319,14 @@ class Delft3DFM:
 
     def convert_pumps(self, pumps: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
         """Convert pumps geometries."""
-        return pumps
+        pumps["edgeid"] = pumps["branchid"]
+        pumps["invlev"] = pumps["startlevelsuctionside"][0]
+        # FIXME: support only single capacity, suction side control
+        return pumps[["edgeid", "invlev", "capacity", "geometry"]]
 
     def convert_weirs(self, weirs: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
         """Convert weirs geometries."""
-        return weirs
-
-    @staticmethod
-    def calculate_zw_flow_area(levels, flow_widths):
-        """
-        Calculate the flow area for 'zw' type crosssections.
-
-        Parameters:
-        levels (numpy.ndarray): Array of levels.
-        flow_widths (numpy.ndarray): Array of flow widths.
-
-        Returns:
-        numpy.ndarray: Array of flow areas.
-        """
-        return np.trapz(flow_widths, x=levels)
-
-    @staticmethod
-    def calculate_zw_wet_radius(levels, flow_widths, closed):
-        """
-        Calculate the wet radius for 'zw' type crosssections.
-
-        Parameters:
-        levels (numpy.ndarray): Array of levels.
-        flow_widths (numpy.ndarray): Array of flow widths.
-        closed (bool): Whether the crosssection is closed.
-
-        Returns:
-        numpy.ndarray: Array of wet radii.
-        """
-        return np.trapz(flow_widths, x=levels) / (
-            (flow_widths[-1] - flow_widths[0])
-            if closed
-            else np.trapz(flow_widths / levels, x=levels)
-        )
+        weirs["edgeid"] = weirs["branchid"]
+        weirs["invlev"] = weirs["crestlevel"]
+        # FIXME: support only simple weir
+        return weirs[["edgeid", "invlev", "geometry"]]
