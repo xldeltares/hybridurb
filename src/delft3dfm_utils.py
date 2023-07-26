@@ -5,7 +5,7 @@ from typing import Optional
 import geopandas as gpd
 from hydromt_delft3dfm import DFlowFMModel
 from pyproj import CRS
-
+import numpy as np
 from hydraulics_utils import HydraulicUtils
 
 logger = logging.getLogger()
@@ -45,7 +45,7 @@ class Delft3DFM:
         self.model = model
         return self.model
 
-    def extract_geometries(self, region: Optional[gpd.GeoDataFrame]):
+    def extract_geometries(self, region: Optional[gpd.GeoDataFrame] = None):
         """
         Extracts geometries from the DFlowFM model. If a region is provided, the geometries will be clipped to this region.
 
@@ -158,13 +158,18 @@ class Delft3DFM:
         gpd.GeoDataFrame, optional: GeoDataFrame containing the converted branches geometries.
         """
 
+        def _split_string_to_array(s):
+            return np.array([float(value) for value in s.split()])
+
         def _calculate_area(row):
             if row.type == "rectangle":
                 return HydraulicUtils.calculate_rectangle_area(row.height, row.width)
             elif row.type == "circle":
                 return HydraulicUtils.calculate_circle_area(row.diameter)
             elif row.type == "zw":
-                return HydraulicUtils.calculate_zw_flow_area(row.levels, row.flowwidths)
+                levels = _split_string_to_array(row.levels)
+                flowwidths = _split_string_to_array(row.flowwidths)
+                return HydraulicUtils.calculate_zw_area(levels, flowwidths)
 
         def _calculate_perimeter(row):
             if row.type == "rectangle":
@@ -174,9 +179,10 @@ class Delft3DFM:
             elif row.type == "circle":
                 return HydraulicUtils.calculate_circle_perimeter(row.diameter)
             elif row.type == "zw":
-                return HydraulicUtils.calculate_zw_perimeter(
-                    row.levels, row.flowwidths, row.closed
-                )
+                levels = _split_string_to_array(row.levels)
+                flowwidths = _split_string_to_array(row.flowwidths)
+                closed = bool(row.closed)
+                return HydraulicUtils.calculate_zw_perimeter(levels, flowwidths, closed)
 
         def _get_shift_at_chainage_begin(df):
             # first, find the index of the minimum chainage for each branchid

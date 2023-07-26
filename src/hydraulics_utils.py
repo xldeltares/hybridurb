@@ -54,8 +54,15 @@ class HydraulicUtils:
         closed (bool): Whether the crosssection is closed.
 
         Returns:
-        float: Array of perimeter.
+        float: perimeter.
         """
+        # Check if levels contains 0 and remove it
+        if 0 in levels:
+            zero_index = np.where(levels == 0)[0]
+            levels = np.delete(levels, zero_index)
+            flow_widths = np.delete(flow_widths, zero_index)
+
+        # Calculate perimeter
         perimeter = np.trapz(flow_widths, x=levels) / (
             (flow_widths[-1] - flow_widths[0])
             if closed
