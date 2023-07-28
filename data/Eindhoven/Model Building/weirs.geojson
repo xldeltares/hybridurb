@@ -2,14 +2,14 @@
 "type": "FeatureCollection",
 "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::28992" } },
 "features": [
-{ "type": "Feature", "properties": { "index": "OVS18", "edgeid": "OVS18", "invlev": 15.4 }, "geometry": { "type": "Point", "coordinates": [ 159119.112, 389352.175999999977648 ] } },
-{ "type": "Feature", "properties": { "index": "OVS56", "edgeid": "OVS56", "invlev": 14.8 }, "geometry": { "type": "Point", "coordinates": [ 161141.404, 389108.944000000017695 ] } },
-{ "type": "Feature", "properties": { "index": "OVS57", "edgeid": "OVS57", "invlev": 14.8 }, "geometry": { "type": "Point", "coordinates": [ 161142.404, 389108.944000000017695 ] } },
-{ "type": "Feature", "properties": { "index": "OVS38", "edgeid": "OVS38", "invlev": 14.72 }, "geometry": { "type": "Point", "coordinates": [ 160930.162000000011176, 389286.560999999986961 ] } },
-{ "type": "Feature", "properties": { "index": "OVS39", "edgeid": "OVS39", "invlev": 14.45 }, "geometry": { "type": "Point", "coordinates": [ 160978.68, 389338.794999999983702 ] } },
-{ "type": "Feature", "properties": { "index": "OVS37", "edgeid": "OVS37", "invlev": 14.7 }, "geometry": { "type": "Point", "coordinates": [ 160923.0, 389393.0 ] } },
-{ "type": "Feature", "properties": { "index": "OVS40", "edgeid": "OVS40", "invlev": 14.3 }, "geometry": { "type": "Point", "coordinates": [ 160722.854, 389495.492000000027474 ] } },
-{ "type": "Feature", "properties": { "index": "OVS58", "edgeid": "OVS58", "invlev": 14.8 }, "geometry": { "type": "Point", "coordinates": [ 161658.187, 389128.577 ] } },
-{ "type": "Feature", "properties": { "index": "OVS141", "edgeid": "OVS141", "invlev": 17.14 }, "geometry": { "type": "Point", "coordinates": [ 161911.799999999988358, 391141.200000000011642 ] } }
+{ "type": "Feature", "properties": { "index": "OVS18", "edgeid": "OVS18", "structureid": "OVS18", "structuretype": "weir", "invlev": 15.4 }, "geometry": { "type": "Point", "coordinates": [ 159119.112, 389352.175999999977648 ] } },
+{ "type": "Feature", "properties": { "index": "OVS56", "edgeid": "OVS56", "structureid": "OVS56", "structuretype": "weir", "invlev": 14.8 }, "geometry": { "type": "Point", "coordinates": [ 161141.404, 389108.944000000017695 ] } },
+{ "type": "Feature", "properties": { "index": "OVS57", "edgeid": "OVS57", "structureid": "OVS57", "structuretype": "weir", "invlev": 14.8 }, "geometry": { "type": "Point", "coordinates": [ 161142.404, 389108.944000000017695 ] } },
+{ "type": "Feature", "properties": { "index": "OVS38", "edgeid": "OVS38", "structureid": "OVS38", "structuretype": "weir", "invlev": 14.72 }, "geometry": { "type": "Point", "coordinates": [ 160930.162000000011176, 389286.560999999986961 ] } },
+{ "type": "Feature", "properties": { "index": "OVS39", "edgeid": "OVS39", "structureid": "OVS39", "structuretype": "weir", "invlev": 14.45 }, "geometry": { "type": "Point", "coordinates": [ 160978.68, 389338.794999999983702 ] } },
+{ "type": "Feature", "properties": { "index": "OVS37", "edgeid": "OVS37", "structureid": "OVS37", "structuretype": "weir", "invlev": 14.7 }, "geometry": { "type": "Point", "coordinates": [ 160923.0, 389393.0 ] } },
+{ "type": "Feature", "properties": { "index": "OVS40", "edgeid": "OVS40", "structureid": "OVS40", "structuretype": "weir", "invlev": 14.3 }, "geometry": { "type": "Point", "coordinates": [ 160722.854, 389495.492000000027474 ] } },
+{ "type": "Feature", "properties": { "index": "OVS58", "edgeid": "OVS58", "structureid": "OVS58", "structuretype": "weir", "invlev": 14.8 }, "geometry": { "type": "Point", "coordinates": [ 161658.187, 389128.577 ] } },
+{ "type": "Feature", "properties": { "index": "OVS141", "edgeid": "OVS141", "structureid": "OVS141", "structuretype": "weir", "invlev": 17.14 }, "geometry": { "type": "Point", "coordinates": [ 161911.799999999988358, 391141.200000000011642 ] } }
 ]
 }

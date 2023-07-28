@@ -2,8 +2,8 @@
 "type": "FeatureCollection",
 "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::28992" } },
 "features": [
-{ "type": "Feature", "properties": { "index": "PMP14", "edgeid": "PMP14", "invlev": 14.5, "capacity": 0.004 }, "geometry": { "type": "Point", "coordinates": [ 160725.587290959228994, 389007.127236928849015 ] } },
-{ "type": "Feature", "properties": { "index": "PMP13", "edgeid": "PMP13", "invlev": 13.6, "capacity": 0.001 }, "geometry": { "type": "Point", "coordinates": [ 160952.340420272957999, 389105.782170968246646 ] } },
-{ "type": "Feature", "properties": { "index": "PMP44", "edgeid": "PMP44", "invlev": 16.2, "capacity": 0.0215 }, "geometry": { "type": "Point", "coordinates": [ 161906.638639864657307, 391140.832137196674012 ] } }
+{ "type": "Feature", "properties": { "index": "PMP14", "edgeid": "PMP14", "structureid": "PMP14", "structuretype": "pump", "invlev": 14.5, "capacity": 0.004 }, "geometry": { "type": "Point", "coordinates": [ 160725.587290959228994, 389007.127236928849015 ] } },
+{ "type": "Feature", "properties": { "index": "PMP13", "edgeid": "PMP13", "structureid": "PMP13", "structuretype": "pump", "invlev": 13.6, "capacity": 0.001 }, "geometry": { "type": "Point", "coordinates": [ 160952.340420272957999, 389105.782170968246646 ] } },
+{ "type": "Feature", "properties": { "index": "PMP44", "edgeid": "PMP44", "structureid": "PMP44", "structuretype": "pump", "invlev": 16.2, "capacity": 0.0215 }, "geometry": { "type": "Point", "coordinates": [ 161906.638639864657307, 391140.832137196674012 ] } }
 ]
 }
