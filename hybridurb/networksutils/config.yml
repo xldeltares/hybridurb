@@ -1,0 +1,7 @@
+global:
+  root: c:/Developments/hybridurb/data/Eindhoven
+  region: c:/Developments/hybridurb/data/Eindhoven/clip_region.shp
+  crs: 28992
+get_geoms_from_model:
+  geoms_dir: ./Model Building      
+  model_dir: ./Delft3DFM

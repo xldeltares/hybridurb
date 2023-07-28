@@ -6,7 +6,6 @@ import geopandas as gpd
 import numpy as np
 from hydromt_delft3dfm import DFlowFMModel
 from pyproj import CRS
-
 from hydraulics_utils import HydraulicUtils
 
 logger = logging.getLogger()
@@ -326,14 +325,22 @@ class Delft3DFM:
 
     def convert_pumps(self, pumps: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
         """Convert pumps geometries."""
+        pumps["structureid"] = pumps["id"]
+        pumps["structuretype"] = pumps["type"]
         pumps["edgeid"] = pumps["branchid"]
-        pumps["invlev"] = pumps["startlevelsuctionside"][0]
         # FIXME: support only single capacity, suction side control
-        return pumps[["edgeid", "invlev", "capacity", "geometry"]]
+        pumps["invlev"] = pumps["startlevelsuctionside"].apply(
+            lambda x: x[0] if len(x) > 0 else None
+        )
+        return pumps[
+            ["structureid", "structuretype", "edgeid", "invlev", "capacity", "geometry"]
+        ]
 
     def convert_weirs(self, weirs: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
         """Convert weirs geometries."""
+        weirs["structureid"] = weirs["id"]
+        weirs["structuretype"] = weirs["type"]
         weirs["edgeid"] = weirs["branchid"]
         weirs["invlev"] = weirs["crestlevel"]
         # FIXME: support only simple weir
-        return weirs[["edgeid", "invlev", "geometry"]]
+        return weirs[["structureid", "structuretype", "edgeid", "invlev", "geometry"]]
