@@ -1,7 +1,10 @@
 global:
   root: c:/Developments/hybridurb/data/Eindhoven
-  region: c:/Developments/hybridurb/data/Eindhoven/clip_region.shp
+  region: c:/Developments/hybridurb/data/Eindhoven/region.geojson
   crs: 28992
 get_geoms_from_model:
   geoms_dir: ./Model Building      
   model_dir: ./Delft3DFM
+setup_networkmodel:
+  global:
+    snap_offset: 1

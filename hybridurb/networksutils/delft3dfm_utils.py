@@ -320,7 +320,7 @@ class Delft3DFM:
         manholes["volume"] = manholes["depth"] * manholes["area"]
 
         return manholes[
-            ["bedlevel", "streetlevel", "depth", "area", "volume", "geometry"]
+            ["nodeid", "bedlevel", "streetlevel", "depth", "area", "volume", "geometry"]
         ]
 
     def convert_pumps(self, pumps: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
@@ -333,7 +333,7 @@ class Delft3DFM:
             lambda x: x[0] if len(x) > 0 else None
         )
         return pumps[
-            ["structureid", "structuretype", "edgeid", "invlev", "capacity", "geometry"]
+            ["edgeid", "structureid", "structuretype", "invlev", "capacity", "geometry"]
         ]
 
     def convert_weirs(self, weirs: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
@@ -343,4 +343,4 @@ class Delft3DFM:
         weirs["edgeid"] = weirs["branchid"]
         weirs["invlev"] = weirs["crestlevel"]
         # FIXME: support only simple weir
-        return weirs[["structureid", "structuretype", "edgeid", "invlev", "geometry"]]
+        return weirs[["edgeid", "structureid", "structuretype", "invlev", "geometry"]]
