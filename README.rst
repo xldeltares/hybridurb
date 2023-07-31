@@ -4,9 +4,29 @@
 HybridUrb: a Python package to perform hybrid urban flood modelling
 ===================================================================
 
-HybridUrb is a python package to build and run simplified 1D models for urban flood nowcasting using hybrid method proposed by `Li & Willems (2022)`_.
+HybridUrb is a python package to build and run hybrid models for fast and probabilistic urban pluvial flood prediction.
 
-HybridUrb is a package under development. The current version only support using the package to run a pre-calibrated HybridUrb model in nowcast mode.
+HybridUrb is a package under active development. 
+
+The pre-release version `v0.1.0-alpha` supports:
+
+- Run a pre-calibrated HybridUrb model in nowcast mode.
+- Run nowcast mode with pre- and post-adaptor for Delft-FEWS.
+
+The current vertion `v0.2.0.dev0` will be able to:
+
+- Build and Calibrate a hybrid model from Delft3DFM.
+- Perform network analysis using graph-theory via a seperate network module for urban drainage networks. 
+
+Quick start using developer install:
+
+.. code-block:: console
+
+    $ git clone git@github.com:xldeltares/hybridurb.git
+    $ cd hybridurb
+    $ conda env create -f envs/environment_dev.yaml
+    $ conda activate hybridurb-dev
+    $ flit install --pth-file
 
 Reference:
 
