@@ -2,24 +2,34 @@ name: hybridurb-dev
 channels:
   - conda-forge
 dependencies:
-  - python=3.8.*
+  - python=3.9.*
   - pip
-  - poetry
-  - numpy=1.23.5
-  - gdal=3.6.1
-  - networkx=3.0
-  - hydromt=0.6.0
-  - pytest=7.2.1
-  - scikit-learn=1.2.0
-  - sympy=1.11.1
-  - statsmodels=0.13.5
-  - momepy=0.5.4
-  - matplotlib=3.7.0
-  - isort
-  - black
-  - pytest
-  - sphinx
+  - flit>=3.4
+  - hydromt>=0.7.0 
+  
+  - networkx=3.0 # for graph model
+  - momepy # for graph model
+  
+  - scikit-learn # for regression model
+  - sympy # for regression model
+  - statsmodels # for regression model
+  
+  - matplotlib # for report
+
+  - pytest # tests
+  - pytest-cov # tests
+  - pytest-mock # tests
+  - pytest-timeout # test
+  - responses # tests
+
+  - sphinx # docs
+  - sphinx-design # docs
+  - pydata-sphinx-theme  # docs
+ 
   - pip:
-    - meshkernel==2.0.1
-    - xugrid==0.2.1
-    - pydata-sphinx-theme
+    - hydrolib-core==0.5.2
+    - git+https://github.com/Deltares/hydromt_delft3dfm.git # for delft3dfm model
+    
+    - meshkernel  # to run model in operational mode
+    - xugrid  # to run model in operational mode
+    

@@ -13,7 +13,7 @@ The pre-release version `v0.1.0-alpha` supports:
 - Run a pre-calibrated HybridUrb model in nowcast mode.
 - Run nowcast mode with pre- and post-adaptor for Delft-FEWS.
 
-The version currently underdevelopment will be able to:
+The current vertion `v0.2.0.dev0` will be able to:
 
 - Build and Calibrate a hybrid model from Delft3DFM.
 - Perform network analysis using graph-theory via a seperate network module for urban drainage networks. 
@@ -26,8 +26,7 @@ Quick start using developer install:
     $ cd hybridurb
     $ conda env create -f envs/environment_dev.yaml
     $ conda activate hybridurb-dev
-    $ conda develop .
-	
+    $ flit install --pth-file
 
 Reference:
 
