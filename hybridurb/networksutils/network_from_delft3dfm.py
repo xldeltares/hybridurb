@@ -232,6 +232,9 @@ class Delft3dfmNetworkWrapper:
         opt = parse_config(self.networkopt)
         # Build model
         model.build(opt=opt)
+        model.setup_dag(
+            target_query="structuretype == 'weir'", report="dag targeting weir"
+        )
 
         # change the current working directory back
         os.chdir(cwd)
