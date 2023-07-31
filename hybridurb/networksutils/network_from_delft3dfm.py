@@ -40,7 +40,11 @@ logger = logging.getLogger(__name__)
 
 class Delft3dfmNetworkWrapper:
     """
-    This is a wrapper class for the Delft3D flexible mesh (FM) network.
+    This is a wrapper class for the Delft3D flexible mesh (FM) type Network.
+
+    Methods:
+    setup_delft3dfm
+    setup_network
     """
 
     _config_fn = Path(__file__).with_name("config.yml")
@@ -48,6 +52,8 @@ class Delft3dfmNetworkWrapper:
     _networkopt = Path(__file__).with_name(
         "networkopt_delft3dfm.ini"
     )  # FIXME switch to yml
+    _delft3dfmmodel: Delft3DFM = None
+    _networkmodel: NetworkModel = None
 
     def __init__(self, config_fn: Path = _config_fn) -> None:
         """

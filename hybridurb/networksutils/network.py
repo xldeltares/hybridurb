@@ -1,6 +1,6 @@
 """Implement plugin model class"""
 from __future__ import annotations
-
+from typing import Union
 import glob
 import itertools
 import logging
@@ -69,6 +69,7 @@ class NetworkModel(Model):
         self,
         region,
         report: str = None,
+        crs: Union[str, int] = 4326,
         **kwargs,
     ):
         """Define the model region.
@@ -99,6 +100,9 @@ class NetworkModel(Model):
         # Set the model region geometry (to be accessed through the shortcut self.region).
         self.set_staticgeoms(geom, "region")
         # FIXME: how to deprecate WARNING:root:No staticmaps defined
+
+        # set crs
+        self._crs = pyproj.CRS.from_user_input(crs)
 
         if report:
             plt.figure(figsize=(8, 8))
@@ -1731,9 +1735,9 @@ class NetworkModel(Model):
         if not self._write:
             # start fresh in read-only mode
             self._staticgeoms = dict()
-        for fn in glob.glob(join(self.root, "staticgeoms", "*.shp")):
-            name = basename(fn).replace(".shp", "")
-            geom = hydromt.open_vector(fn, driver="shp", crs=self.crs)
+        for fn in glob.glob(join(self.root, "staticgeoms", "*.geojson")):
+            name = basename(fn).replace(".geojson", "")
+            geom = hydromt.open_vector(fn, crs=self.crs)
             self.set_staticgeoms(geom, name)
 
     def write_staticgeoms(self):  # write_all()
@@ -1742,7 +1746,9 @@ class NetworkModel(Model):
         if not self._write:
             raise IOError("Model opened in read-only mode")
         for name, gdf in self.staticgeoms.items():
-            fn_out = join(self.root, "staticgeoms", f"{name}.shp")
+            if not gdf.crs:
+                gdf = gdf.set_crs(self.crs)
+            fn_out = join(self.root, "staticgeoms", f"{name}.geojson")
             gdf.to_file(fn_out)
             # FIXME solve the issue when output columns are too long
 
@@ -1857,7 +1863,7 @@ class NetworkModel(Model):
 
     @property
     def crs(self):
-        return pyproj.CRS.from_epsg(self.get_config("global.epsg", fallback=4326))
+        return self._crs
 
     @property
     def graphmodel(self):
