@@ -209,7 +209,9 @@ class Delft3dfmNetworkWrapper:
         self.networkopt = networkopt
 
     def setup_network(self):
-        """setup network"""
+        """setup network.
+        Note will always overwrite.
+        """
 
         # FIXME
         # get the current working directory
@@ -221,9 +223,10 @@ class Delft3dfmNetworkWrapper:
         # Initialise
         model = NetworkModel(
             root=self.root,
-            mode="w",
+            mode="w+",
             data_libs=self.data_catalog,
             logger=self.logger,
+            crs=self.crs.to_epsg(),
         )
         # Build method options
         opt = parse_config(self.networkopt)
@@ -233,9 +236,6 @@ class Delft3dfmNetworkWrapper:
         # change the current working directory back
         os.chdir(cwd)
 
-        pass
-
-    def optimise_network(self):
         pass
 
 

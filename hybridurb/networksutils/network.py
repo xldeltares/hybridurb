@@ -47,6 +47,7 @@ class NetworkModel(Model):
         # yml # TODO: how to choose global mapping files (.csv) and project specific mapping files (.csv)
         logger=logger,
         deltares_data=False,  # data from pdrive
+        crs: Union[int, str] = 4326,
     ):
         if not isinstance(root, (str, Path)):
             raise ValueError("The 'root' parameter should be a of str or Path.")
@@ -61,6 +62,7 @@ class NetworkModel(Model):
         )
 
         # model specific
+        self._crs = pyproj.CRS.from_user_input(crs)
         self._meta = {}
         self._graphmodel = None
         self._subgraphmodels = {}
@@ -69,7 +71,6 @@ class NetworkModel(Model):
         self,
         region,
         report: str = None,
-        crs: Union[str, int] = 4326,
         **kwargs,
     ):
         """Define the model region.
@@ -100,9 +101,6 @@ class NetworkModel(Model):
         # Set the model region geometry (to be accessed through the shortcut self.region).
         self.set_staticgeoms(geom, "region")
         # FIXME: how to deprecate WARNING:root:No staticmaps defined
-
-        # set crs
-        self._crs = pyproj.CRS.from_user_input(crs)
 
         if report:
             plt.figure(figsize=(8, 8))
@@ -1784,7 +1782,7 @@ class NetworkModel(Model):
             pickle.dump(G, f, pickle.HIGHEST_PROTOCOL)
 
         # write edges
-        shp = gpd.GeoDataFrame(nx.to_pandas_edgelist(G).set_index("id"))
+        shp = gpd.GeoDataFrame(nx.to_pandas_edgelist(G).set_index("id"), crs=self.crs)
 
         # prune results need dessolving
         # df = nx.to_pandas_edgelist(G).set_index("id")
@@ -1797,13 +1795,13 @@ class NetworkModel(Model):
         # shp = gpd.GeoDataFrame(df)
         try:
             shp.drop(columns=["source", "target"]).to_file(
-                join(outdir, f"{outname}_edges.shp")
+                join(outdir, f"{outname}_edges.geojson")
             )  # drop them because they are tuple
         except:
             shp.drop(
                 columns=["source", "target", "upstream_nodes", "upstream_edges"]
             ).to_file(
-                join(outdir, f"{outname}_edges.shp")
+                join(outdir, f"{outname}_edges.geojson")
             )  # drop them because they are tuple
 
         # write nodes
@@ -1812,23 +1810,23 @@ class NetworkModel(Model):
         ).reset_index()
         if len(df) == 0:  # no attribute
             df = pd.DataFrame(dict(G.nodes(data=True)).keys())
-            shp = gpd.GeoDataFrame(df, geometry=gpd.points_from_xy(df[0], df[1]))
+            shp = gpd.GeoDataFrame(df, geometry=gpd.points_from_xy(df[0], df[1]), crs = self.crs)
             shp.drop(columns=[0, 1]).to_file(
-                join(outdir, f"{outname}_nodes.shp")
+                join(outdir, f"{outname}_nodes.geojson")
             )  # drop them because they are tuple
         else:
             shp = gpd.GeoDataFrame(
-                df, geometry=gpd.points_from_xy(df.level_0, df.level_1)
+                df, geometry=gpd.points_from_xy(df.level_0, df.level_1), crs = self.crs
             )
             try:
                 shp.drop(columns=["level_0", "level_1"]).to_file(
-                    join(outdir, f"{outname}_nodes.shp")
+                    join(outdir, f"{outname}_nodes.geojson")
                 )  # drop them because they are tuple
             except:
                 shp.drop(
                     columns=["level_0", "level_1", "upstream_nodes", "upstream_edges"]
                 ).to_file(
-                    join(outdir, f"{outname}_nodes.shp")
+                    join(outdir, f"{outname}_nodes.geojson")
                 )  # drop them because they are tuple
 
     def read_forcing(self):
