@@ -18,7 +18,6 @@ import pyproj
 import xarray as xr
 from hydromt import gis_utils, io, raster
 from hydromt.models.model_api import Model
-from rasterio.warp import transform_bounds
 from shapely.geometry import box
 
 from workflows import *
@@ -1810,13 +1809,15 @@ class NetworkModel(Model):
         ).reset_index()
         if len(df) == 0:  # no attribute
             df = pd.DataFrame(dict(G.nodes(data=True)).keys())
-            shp = gpd.GeoDataFrame(df, geometry=gpd.points_from_xy(df[0], df[1]), crs = self.crs)
+            shp = gpd.GeoDataFrame(
+                df, geometry=gpd.points_from_xy(df[0], df[1]), crs=self.crs
+            )
             shp.drop(columns=[0, 1]).to_file(
                 join(outdir, f"{outname}_nodes.geojson")
             )  # drop them because they are tuple
         else:
             shp = gpd.GeoDataFrame(
-                df, geometry=gpd.points_from_xy(df.level_0, df.level_1), crs = self.crs
+                df, geometry=gpd.points_from_xy(df.level_0, df.level_1), crs=self.crs
             )
             try:
                 shp.drop(columns=["level_0", "level_1"]).to_file(
