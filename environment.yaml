@@ -1,8 +1,0 @@
-name: hybridurb-poetry
-channels:
-  - conda-forge
-dependencies:
-  - python=3.8.*
-  - pip
-  - poetry=1.4.0
-  - gdal=3.6.1

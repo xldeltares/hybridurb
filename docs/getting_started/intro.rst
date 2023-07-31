@@ -1,45 +1,10 @@
 Getting started
 ===============
 
-.. grid:: 3
-    :gutter: 1
+Welcome to HybridUrb. The page, so is the tool, is undergoing active development. 
 
-    .. grid-item-card::
-        :text-align: center
-        :link: quick_overview
-        :link-type: ref
-
-        :octicon:`rocket;10em`
-        +++
-        Quick overview
-
-    .. grid-item-card::
-        :text-align: center
-        :link: installation_guide
-        :link-type: ref
-
-        :octicon:`gear;10em`
-        +++
-        Installation guide
-
-    .. grid-item-card:: 
-        :text-align: center
-        :link: intro_user_guide
-        :link-type: ref
-        
-        :octicon:`book;10em`
-        +++
-        User guide
-
-
-    .. grid-item-card::
-        :text-align: center
-        :link: publications
-        :link-type: ref
-
-        :octicon:`mortar-board;10em`
-        +++
-        Publications
+To get started, :ref:`Quick Overview <quick_overview>` demonstrates how the package is current working for nowcasting in Delft-FEWS. 
+Go to :ref:`Use cases <use_cases>` for cases of how the tool has been applied. 
 
 .. toctree::
    :caption: Table of Contents
@@ -47,5 +12,6 @@ Getting started
    :hidden:
 
    quick_overview.rst
+   use_cases.rst
    installation.rst
    publications.rst
