@@ -11,17 +11,18 @@ dependencies = [
 	"xugrid", # check
 	"meshkernel", # check
 	"pyproj", # check
-	"shapely >=0.2.0", # check -> not installed in env
+	"shapely >=0.2.0", # check
 	"scipy", # check
 	"networkx >= 3.0", # check
 	"sympy", # check
 	"momepy >= 0.5.4", # check
 	"hydromt_delft3dfm", # ????
+	"pygraphviz", # check
 	"matplotlib", # check
-	"contextily", # check -> not installed in env
-	"community", # check -> not installed in env
+	"contextily", # check
+	"community", # check
 	# "pygeos", # remove dependancy after new xugrid releases
-		# "pyflwdir >=0.5.4",
+	# "pyflwdir >=0.5.4",
 	# "scikit-learn",
 	# "statsmodels",
 ]

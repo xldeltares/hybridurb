@@ -6,7 +6,7 @@ import geopandas as gpd
 import numpy as np
 from pyproj import CRS
 
-from delft3dfm_utils import Delft3DFM
+from hybridurb.networksutils.delft3dfm_utils import Delft3DFM
 
 # Define the root path where the project files are located
 root = Path(r"c:\Developments\hybridurb\data\Eindhoven\Delft3DFM")

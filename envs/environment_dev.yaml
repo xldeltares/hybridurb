@@ -14,6 +14,7 @@ dependencies:
   - sympy # for regression model
   - statsmodels # for regression model
   
+  - pygraphviz # for report
   - matplotlib # for report
 
   - pytest # tests
@@ -27,7 +28,7 @@ dependencies:
   - pydata-sphinx-theme  # docs
  
   - pip:
-    - hydrolib-core==0.5.2
+    - hydrolib-core==0.5.2 # for delft3dfm model
     - git+https://github.com/Deltares/hydromt_delft3dfm.git # for delft3dfm model
     
     - meshkernel  # to run model in operational mode
