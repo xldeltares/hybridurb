@@ -200,6 +200,28 @@ class Delft3DFM:
             lookup_df = df.loc[idx, ["branchid", "shift"]].set_index("branchid")
             return df["branchid"].map(lookup_df["shift"])
 
+        def _parse_crosssections(crosssections):
+            # get locations
+            crslocs = crosssections[
+                [c for c in crosssections.columns if c.startswith("crsloc")]
+            ]
+            # get definition
+            crsdef = crosssections[
+                [
+                    c
+                    for c in crosssections.columns
+                    if (c.startswith("crsdef") or c.startswith("friction"))
+                    and not c.startswith("crsdef_friction")
+                ]  # exclude friction
+            ]
+            crs = pd.concat([crslocs, crsdef], axis=1)
+            crs.rename(
+                columns={c: c[7:] for c in crs.columns if c.startswith("crs")},
+                inplace=True,
+            )
+            crs["geometry"] = crosssections["geometry"]
+            return crs
+
         _supported_branch_types = ["pipe"]
         if not branches["branchtype"].isin(_supported_branch_types).any():
             logger.warning(f"branches only support {_supported_branch_types}")
@@ -238,10 +260,7 @@ class Delft3DFM:
             return None
 
         # preprocess crossections
-        crosssections.rename(
-            columns={c: c[7:] for c in crosssections.columns if c.startswith("crs")},
-            inplace=True,
-        )
+        crosssections = _parse_crosssections(crosssections)
         # FIXME: assumes always at the beginning and end
         crosssections["invlev_up"] = _get_shift_at_chainage_begin(crosssections)
         crosssections["invlev_dn"] = _get_shift_at_chainage_end(crosssections)
@@ -258,35 +277,6 @@ class Delft3DFM:
         branches["gradient"] = (
             branches["invlev_dn"] - branches["invlev_up"]
         ) / branches["length"]
-        # TODO: move these to network computation --> because of needing upstream downstream information
-        # calculate hydraulic parameters (dynamic)
-        # branches["hydraulic_diameter"] = branches.apply(
-        #     lambda x: HydraulicUtils.calculate_hydraulic_diameter(x.area, x.perimeter)
-        # )
-
-        # branches["velocity"] = branches.apply(
-        #     lambda x: HydraulicUtils.calculate_velocity(
-        #         hydraulic_diameter=x.hydraulic_diameter,
-        #         hydraulic_gradient=x.gradient,
-        #         roughness_coefficient=x.frictionvalue,
-        #     )
-        # )  # FIXME gradient can be 0
-        # branches["capacity"] = branches.apply(
-        #     lambda x: HydraulicUtils.calculate_capcity(x.velocity, x.area)
-        # )
-        # branches["reynolds_number"] = branches.apply(
-        #     lambda x: HydraulicUtils.calculate_capcity(x.velocity, x.hydraulic_diameter)
-        # )
-        # branches["friction_factor"] = branches.apply(
-        #     lambda x: HydraulicUtils.calculate_friction_factor(
-        #         x.reynolds_number, x.frictionvalue, x.hydraulic_diameter
-        #     )
-        # )
-        # branches["head_loss"] = branches.apply(
-        #     lambda x: HydraulicUtils.calculate_head_loss(
-        #         x.friction_factor, x.velocity, x.length, x.hydraulic_diameter
-        #     )
-        # )
 
         # add edgeid
         branches["edgeid"] = branches["branchid"]
@@ -302,6 +292,8 @@ class Delft3DFM:
                 "gradient",
                 "invlev_up",
                 "invlev_dn",
+                "frictiontype",
+                "frictionvalue",
                 "geometry",
             ]
         ]
