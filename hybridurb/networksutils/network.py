@@ -32,7 +32,7 @@ class NetworkModel(Model):
     # FIXME
     _NAME = "Network"
     _CONF = ""
-    _DATADIR = None
+    _DATADIR = ""
     _GEOMS = {}  # FIXME Mapping from hydromt names to model specific names
     _MAPS = {}  # FIXME Mapping from hydromt names to model specific names
     _FOLDERS = ["graph", "staticgeoms"]
@@ -143,7 +143,9 @@ class NetworkModel(Model):
                 "MultiGraph",
                 "MultiDiGraph",
             ], "graph_class not recognised. Please assign grah_class using one of the following [Graph, DiGraph, MultiGraph, MultiDiGraph]"
-            self._graphmodel = eval(f"nx.{graph_class}()")
+            self._graphmodel = eval(
+                f"nx.{graph_class}(crs=self.crs, approach='primal')"
+            )
 
         if report:
             G = self._graphmodel
@@ -152,7 +154,7 @@ class NetworkModel(Model):
 
     def setup_edges(
         self,
-        edges_fn: str,
+        edges_fn: Union[None, str, gpd.GeoDataFrame],
         id_col: str | None = None,
         attribute_cols: list | None = None,
         snap_offset: float = 10e-6,
@@ -167,6 +169,8 @@ class NetworkModel(Model):
 
         if edges_fn is None:
             raise ValueError(f"Expected edges_fn.")
+        elif isinstance(edges_fn, gpd.GeoDataFrame):
+            edges = edges_fn.copy()
         else:
             edges = self._get_geodataframe(edges_fn)
 
@@ -199,7 +203,7 @@ class NetworkModel(Model):
 
     def setup_edge_attributes(
         self,
-        edges_fn: str,
+        edges_fn: Union[None, str, gpd.GeoDataFrame],
         id_col: str | None = None,
         attribute_cols: list | None = None,
         snap_offset: float | None = None,
@@ -218,6 +222,8 @@ class NetworkModel(Model):
 
         if edges_fn is None:
             raise ValueError(f"Expected edges_fn.")
+        elif isinstance(edges_fn, gpd.GeoDataFrame):
+            edges = edges_fn.copy()
         else:
             edges = self._get_geodataframe(edges_fn)
 
@@ -253,7 +259,7 @@ class NetworkModel(Model):
 
     def setup_nodes(
         self,
-        nodes_fn: str,
+        nodes_fn: Union[None, str, gpd.GeoDataFrame],
         id_col: str,
         attribute_cols: list = None,
         snap_offset: float = 10e-6,
@@ -268,6 +274,8 @@ class NetworkModel(Model):
 
         if nodes_fn is None:
             raise ValueError(f"Expected nodes_fn.")
+        elif isinstance(nodes_fn, gpd.GeoDataFrame):
+            nodes = nodes_fn.copy()
         else:
             nodes = self._get_geodataframe(nodes_fn)
 
@@ -298,7 +306,7 @@ class NetworkModel(Model):
 
     def setup_node_attributes(
         self,
-        nodes_fn: str,
+        nodes_fn: Union[None, str, gpd.GeoDataFrame],
         id_col: str | None = None,
         attribute_cols: list | None = None,
         snap_offset: float | None = None,
@@ -313,6 +321,8 @@ class NetworkModel(Model):
 
         if nodes_fn is None:
             raise ValueError(f"Expected nodes_fn.")
+        elif isinstance(nodes_fn, gpd.GeoDataFrame):
+            nodes = nodes_fn.copy()
         else:
             nodes = self._get_geodataframe(nodes_fn)
 
