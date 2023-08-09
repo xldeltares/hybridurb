@@ -31,9 +31,9 @@ from hydromt.data_catalog import DataCatalog
 from hydromt.cli.cli_utils import parse_config
 from hydromt.log import setuplog
 
-from delft3dfm_utils import Delft3DFM
-from hydraulics_utils import HydraulicUtils
-from network import NetworkModel
+from .delft3dfm_utils import Delft3DFM
+from hybridurb.hydraulics_utils import HydraulicUtils
+from .network import NetworkModel
 
 
 logger = logging.getLogger(__name__)
@@ -289,14 +289,3 @@ class Delft3dfmNetworkWrapper:
             ),
             axis=1,
         )
-
-
-mywrapper = Delft3dfmNetworkWrapper()
-# get geoms from delft3dfm
-# setup network from geometry files
-# compute hydraulic params? --> then that requires certain edge and nodes attributes
-# optionmisation --> dag
-# compute flow path
-mywrapper.get_geoms_from_model()
-mywrapper.get_network_from_geoms()
-mywrapper.get_network_properties()

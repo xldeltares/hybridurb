@@ -4,7 +4,7 @@ global:
   crs: 28992
 get_geoms_from_model:
   geoms_dir: ./Model Building      
-  model_dir: ./Delft3DFM
+  model_dir: ./dimr_export
 setup_networkmodel:
   global:
     snap_offset: 1

@@ -6,7 +6,7 @@ import geopandas as gpd
 import numpy as np
 from hydromt_delft3dfm import DFlowFMModel
 from pyproj import CRS
-from hydraulics_utils import HydraulicUtils
+from hybridurb.hydraulics_utils import HydraulicUtils
 
 logger = logging.getLogger()
 

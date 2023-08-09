@@ -1,13 +1,13 @@
 """Implement plugin model class"""
 from __future__ import annotations
-
+from typing import Union
 import glob
 import itertools
 import logging
 from collections import Counter
 from os.path import basename, isfile, join
 from pathlib import Path
-
+import pickle
 import geopandas as gpd
 import hydromt
 import matplotlib.pyplot as plt
@@ -18,11 +18,9 @@ import pyproj
 import xarray as xr
 from hydromt import gis_utils, io, raster
 from hydromt.models.model_api import Model
-from rasterio.warp import transform_bounds
 from shapely.geometry import box
 
-from . import DATADIR
-from .workflows import *
+from workflows import *
 
 __all__ = ["NetworkModel"]
 logger = logging.getLogger(__name__)
@@ -34,7 +32,7 @@ class NetworkModel(Model):
     # FIXME
     _NAME = "Network"
     _CONF = ""
-    _DATADIR = DATADIR
+    _DATADIR = ""
     _GEOMS = {}  # FIXME Mapping from hydromt names to model specific names
     _MAPS = {}  # FIXME Mapping from hydromt names to model specific names
     _FOLDERS = ["graph", "staticgeoms"]
@@ -48,6 +46,7 @@ class NetworkModel(Model):
         # yml # TODO: how to choose global mapping files (.csv) and project specific mapping files (.csv)
         logger=logger,
         deltares_data=False,  # data from pdrive
+        crs: Union[int, str] = 4326,
     ):
         if not isinstance(root, (str, Path)):
             raise ValueError("The 'root' parameter should be a of str or Path.")
@@ -62,6 +61,7 @@ class NetworkModel(Model):
         )
 
         # model specific
+        self._crs = pyproj.CRS.from_user_input(crs)
         self._meta = {}
         self._graphmodel = None
         self._subgraphmodels = {}
@@ -179,7 +179,7 @@ class NetworkModel(Model):
         if edges is not None:
             if snap_offset is not None:
                 # preprocessing geometry using snap_offset
-                edges = helper.reduce_gdf_precision(edges, rounding_precision=1e-8)
+                edges = reduce_gdf_precision(edges, rounding_precision=1e-8)
                 edges = snap_branch_ends(edges, offset=snap_offset)
                 logger.debug(f"Performing snapping at edges ends.")
 
@@ -899,11 +899,15 @@ class NetworkModel(Model):
             Both option will have less edges. the missing edges indicates their insignificance in direction, i.e. both way are possible. # FIXME
 
         Arguments
-        ----------
+        ---------
         use_super_target : bool
             whether to add a super target at the ends of all targets.
             True if the weight of DAG exist for all edges.
             False if the weight of DAG also need to consider attribute specified for targets.
+
+        See Also
+        --------
+        self._setup_dag
 
         """
         # convert Digraph to Graph
@@ -916,14 +920,81 @@ class NetworkModel(Model):
             targets = self._find_target_nodes(G, target_query, target_query)
         self.logger.debug(f"{len(targets)} targets are selected")
 
-        # check if graph is fully connected
-        if len([_ for _ in nx.connected_components(G.to_undirected())]) > 1:
-            # try adding super nodes
-            _G = G.copy()
-            _G.add_edges_from([(n, -1) for n in targets])
-            self.logger.debug(f"connecting targets to supernode")
-            if len([_ for _ in nx.connected_components(_G.to_undirected())]) > 1:
-                raise TypeError("Cannot apply dag on disconnected graph.")
+        # remove connected components without targets
+        _remain_nodes = set()
+        for comp in nx.connected_components(G.to_undirected()):
+            if not any(comp.intersection(targets)):
+                self.logger.warning(
+                    f"Removing nodes disconnected from targets: {comp}."
+                )
+            else:
+                _remain_nodes.update(comp)
+        G = G.subgraph(_remain_nodes)
+
+        # for each connected component with a target
+        for comp in nx.connected_components(G.to_undirected()):
+            _graph = G.subgraph(comp).copy()
+            _targets = comp.intersection(targets)
+            self._setup_dag(
+                G=_graph,
+                targets=_targets,
+                weight=weight,
+                loads=loads,
+                report=report,
+                algorithm=algorithm,
+            )
+
+    def _setup_dag(
+        self,
+        G: nx.Graph = None,
+        targets=None,
+        weight: str = None,
+        loads: list = [],
+        report: str = None,
+        algorithm: str = "simple",
+        **kwargs,
+    ):
+        """This component prepares subgraph as Directed Acyclic Graphs (dag) using shortest path
+        step 1: add a supernode to subgraph (representing graph - subgraph)
+        step 2: use shortest path to prepare dag edges (source: node in subgraph; target: super node)
+
+        in progress
+
+        Parameters
+        ----------
+        G : nx.Graph
+        targets : None or String or list, optional (default = None)
+            DAG super targets.
+            If None, a target node will be any node with out_degree == 0.
+            If a string, use this to query part of graph as a super target node.
+            If a list, use targets as a list of target nodes.
+        weight : None or string, optional (default = None)
+            Weight used for shortest path.
+            If None, every edge has weight/distance/cost 1.
+            If a string, use this edge attribute as the edge weight.
+            Any edge attribute not present defaults to 1.
+        loads : None or list of strings, optional (default - None)
+            Load used from edges/nodes attributes.
+            If None, every node/edge has a load equal to the total number of nodes upstream (nnodes), and number of edges upstream (nedges).
+            If a list, use the attributes in the list as load.
+            The attribute can be either from edges or from nodes.
+            Any attributes that are not present defaults to 0.
+        algorithm : string, optional (default = 'simple')
+            The algorithm to use to compute the dag.
+            Supported options: 'simple', 'flowpath'.
+            Other inputs produce a ValueError.
+            if 'simple', the input graph is treated as a undirected graph, the resulting graph might alter the original edges direction
+            If 'flowpath', the input graph is treated as a directed graph, the resulting graph do not alter the original edges direction.
+            Both option will have less edges. the missing edges indicates their insignificance in direction, i.e. both way are possible. # FIXME
+
+        Arguments
+        ----------
+        use_super_target : bool
+            whether to add a super target at the ends of all targets.
+            True if the weight of DAG exist for all edges.
+            False if the weight of DAG also need to consider attribute specified for targets.
+
+        """
 
         # check algorithm of the setup
         if algorithm not in ("simple", "flowpath"):
@@ -938,6 +1009,12 @@ class NetworkModel(Model):
 
         # started making dag
         DAG = nx.DiGraph()
+
+        # try adding super nodes
+        G.add_edges_from([(n, -1) for n in targets])
+        self.logger.debug(f"connecting targets to supernode")
+        if len([_ for _ in nx.connected_components(G.to_undirected())]) > 1:
+            raise TypeError("Cannot apply dag on disconnected graph.")
 
         # 1. add path
         # FIXME: if don't do this step: networkx.exception.NetworkXNoPath: No path to **.
@@ -1732,9 +1809,9 @@ class NetworkModel(Model):
         if not self._write:
             # start fresh in read-only mode
             self._staticgeoms = dict()
-        for fn in glob.glob(join(self.root, "staticgeoms", "*.shp")):
-            name = basename(fn).replace(".shp", "")
-            geom = hydromt.open_vector(fn, driver="shp", crs=self.crs)
+        for fn in glob.glob(join(self.root, "staticgeoms", "*.geojson")):
+            name = basename(fn).replace(".geojson", "")
+            geom = hydromt.open_vector(fn, crs=self.crs)
             self.set_staticgeoms(geom, name)
 
     def write_staticgeoms(self):  # write_all()
@@ -1743,7 +1820,9 @@ class NetworkModel(Model):
         if not self._write:
             raise IOError("Model opened in read-only mode")
         for name, gdf in self.staticgeoms.items():
-            fn_out = join(self.root, "staticgeoms", f"{name}.shp")
+            if not gdf.crs:
+                gdf = gdf.set_crs(self.crs)
+            fn_out = join(self.root, "staticgeoms", f"{name}.geojson")
             gdf.to_file(fn_out)
             # FIXME solve the issue when output columns are too long
 
@@ -1753,14 +1832,15 @@ class NetworkModel(Model):
             # start fresh in read-only mode
             self._graphmodel = None
         fn = join(self.root, "graph", "graphmodel.gpickle")
-        self._graphmodel = nx.read_gpickle(fn)
+        with open(fn, "rb") as f:
+            self._graphmodel = pickle.load(f)
 
     def write_graphmodel(self):
         """write graphmodel at <root/?/> in model ready format"""
 
         # report
         figs = [plt.figure(n) for n in plt.get_fignums()]
-        helper.multipage(join(self.root, "graph", "report.pdf"), figs=figs)
+        multipage(join(self.root, "graph", "report.pdf"), figs=figs)
 
         # write graph
         outdir = join(self.root, "graph")
@@ -1774,10 +1854,11 @@ class NetworkModel(Model):
 
     def _write_graph(self, G: nx.Graph, outdir: str, outname: str = "graph"):
         # write pickle
-        nx.write_gpickle(G.copy(), join(outdir, f"{outname}.gpickle"))
+        with open(join(outdir, f"{outname}.gpickle"), "wb") as f:
+            pickle.dump(G, f, pickle.HIGHEST_PROTOCOL)
 
         # write edges
-        shp = gpd.GeoDataFrame(nx.to_pandas_edgelist(G).set_index("id"))
+        shp = gpd.GeoDataFrame(nx.to_pandas_edgelist(G).set_index("id"), crs=self.crs)
 
         # prune results need dessolving
         # df = nx.to_pandas_edgelist(G).set_index("id")
@@ -1790,13 +1871,13 @@ class NetworkModel(Model):
         # shp = gpd.GeoDataFrame(df)
         try:
             shp.drop(columns=["source", "target"]).to_file(
-                join(outdir, f"{outname}_edges.shp")
+                join(outdir, f"{outname}_edges.geojson")
             )  # drop them because they are tuple
         except:
             shp.drop(
                 columns=["source", "target", "upstream_nodes", "upstream_edges"]
             ).to_file(
-                join(outdir, f"{outname}_edges.shp")
+                join(outdir, f"{outname}_edges.geojson")
             )  # drop them because they are tuple
 
         # write nodes
@@ -1805,23 +1886,25 @@ class NetworkModel(Model):
         ).reset_index()
         if len(df) == 0:  # no attribute
             df = pd.DataFrame(dict(G.nodes(data=True)).keys())
-            shp = gpd.GeoDataFrame(df, geometry=gpd.points_from_xy(df[0], df[1]))
+            shp = gpd.GeoDataFrame(
+                df, geometry=gpd.points_from_xy(df[0], df[1]), crs=self.crs
+            )
             shp.drop(columns=[0, 1]).to_file(
-                join(outdir, f"{outname}_nodes.shp")
+                join(outdir, f"{outname}_nodes.geojson")
             )  # drop them because they are tuple
         else:
             shp = gpd.GeoDataFrame(
-                df, geometry=gpd.points_from_xy(df.level_0, df.level_1)
+                df, geometry=gpd.points_from_xy(df.level_0, df.level_1), crs=self.crs
             )
             try:
                 shp.drop(columns=["level_0", "level_1"]).to_file(
-                    join(outdir, f"{outname}_nodes.shp")
+                    join(outdir, f"{outname}_nodes.geojson")
                 )  # drop them because they are tuple
             except:
                 shp.drop(
                     columns=["level_0", "level_1", "upstream_nodes", "upstream_edges"]
                 ).to_file(
-                    join(outdir, f"{outname}_nodes.shp")
+                    join(outdir, f"{outname}_nodes.geojson")
                 )  # drop them because they are tuple
 
     def read_forcing(self):
@@ -1856,7 +1939,7 @@ class NetworkModel(Model):
 
     @property
     def crs(self):
-        return pyproj.CRS.from_epsg(self.get_config("global.epsg", fallback=4326))
+        return self._crs
 
     @property
     def graphmodel(self):

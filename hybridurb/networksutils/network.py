@@ -2,10 +2,8 @@
 from __future__ import annotations
 from typing import Union
 import glob
-import itertools
 import logging
-from collections import Counter
-from os.path import basename, isfile, join
+from os.path import basename, join
 from pathlib import Path
 import pickle
 import geopandas as gpd
@@ -16,11 +14,11 @@ import numpy as np
 import pandas as pd
 import pyproj
 import xarray as xr
-from hydromt import gis_utils, io, raster
 from hydromt.models.model_api import Model
 from shapely.geometry import box
 
-from workflows import *
+from hybridurb.gis_utils import snap_branch_ends, reduce_gdf_precision, multipage
+import hybridurb.graph_utils as graph
 
 __all__ = ["NetworkModel"]
 logger = logging.getLogger(__name__)
