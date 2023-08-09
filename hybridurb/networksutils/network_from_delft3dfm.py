@@ -32,6 +32,7 @@ from hydromt.cli.cli_utils import parse_config
 from hydromt.log import setuplog
 
 from delft3dfm_utils import Delft3DFM
+from hydraulics_utils import HydraulicUtils
 from network import NetworkModel
 
 
@@ -96,7 +97,7 @@ class Delft3dfmNetworkWrapper:
             geoms = self._read_geoms(geoms_dir, self.crs)
         elif self._is_dir_valid(model_dir):
             logging.info(f"reading model from {model_dir}")
-            geoms = self.get_geoms(model_dir, self.crs, self.region, geoms_dir)
+            geoms = self.get_geoms(model_dir, self.crs, None, geoms_dir)
         else:
             self.logger.error("could not perform get_geoms_from_model.")
             return None
@@ -208,7 +209,7 @@ class Delft3dfmNetworkWrapper:
 
         self.networkopt = networkopt
 
-    def setup_network(self):
+    def get_network_from_geoms(self):
         """setup network.
         Note will always overwrite.
         """
@@ -243,7 +244,59 @@ class Delft3dfmNetworkWrapper:
 
         pass
 
+    def get_network_properties():
+        """calculate physical properties that can only be computed in the network"""
+        # TODO: move these to network computation --> because of needing upstream downstream information
+        # calculate hydraulic parameters (dynamic)
+        # from graph_utils import *
+
+        graph = model.graphmodel
+        graph.graph["crs"] = self.crs
+        edges, _ = get_network_edges_and_nodes_from_graph(model.graphmodel)
+        branches = edges[edges["branchtype"] == "pipe"]
+
+        branches["hydraulic_diameter"] = branches.apply(
+            lambda x: HydraulicUtils.calculate_hydraulic_diameter(x.area, x.perimeter),
+            axis=1,
+        )
+
+        branches["velocity"] = branches.apply(
+            lambda x: HydraulicUtils.calculate_velocity(
+                hydraulic_diameter=x.hydraulic_diameter,
+                hydraulic_gradient=x.gradient,
+                roughness_coefficient=x.frictionvalue,
+            ),
+            axis=1,
+        )  # FIXME gradient can be 0
+        branches["capacity"] = branches.apply(
+            lambda x: HydraulicUtils.calculate_capcity(x.velocity, x.area), axis=1
+        )
+        branches["reynolds_number"] = branches.apply(
+            lambda x: HydraulicUtils.calculate_capcity(
+                x.velocity, x.hydraulic_diameter
+            ),
+            axis=1,
+        )
+        branches["friction_factor"] = branches.apply(
+            lambda x: HydraulicUtils.calculate_friction_factor(
+                x.reynolds_number, x.frictionvalue, x.hydraulic_diameter
+            ),
+            axis=1,
+        )
+        branches["head_loss"] = branches.apply(
+            lambda x: HydraulicUtils.calculate_head_loss(
+                x.friction_factor, x.velocity, x.length, x.hydraulic_diameter
+            ),
+            axis=1,
+        )
+
 
 mywrapper = Delft3dfmNetworkWrapper()
+# get geoms from delft3dfm
+# setup network from geometry files
+# compute hydraulic params? --> then that requires certain edge and nodes attributes
+# optionmisation --> dag
+# compute flow path
 mywrapper.get_geoms_from_model()
-mywrapper.setup_network()
+mywrapper.get_network_from_geoms()
+mywrapper.get_network_properties()
