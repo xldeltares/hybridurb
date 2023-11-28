@@ -4,7 +4,7 @@ description = "HybridUrb is a Python package to perform hybird urban flood model
 authors = [{ name = "Xiaohan Li", email = "xiaohan.li@deltares.nl" },]
 dependencies = [
 	"hydromt >=0.9.0",
-	"hydromt_delft3dfm", 
+	"hydromt_delft3dfm >= 0.2.0", 
 	"geopandas", 
 	"shapely", 
 	"pyproj", 
@@ -22,6 +22,7 @@ dependencies = [
 	# "scikit-learn", # statistics
 	# "statsmodels", # statistics
 	"sympy", # statistics
+	"patsy", # runner
 ]
 
 requires-python = ">=3.9"
