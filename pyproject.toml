@@ -3,31 +3,28 @@ name = "hybridurb"
 description = "HybridUrb is a Python package to perform hybird urban flood modelling using the methodology proposed in Li & Willems (2020)."
 authors = [{ name = "Xiaohan Li", email = "xiaohan.li@deltares.nl" },]
 dependencies = [
-	"hydromt >=0.7.0", # check
-	"geopandas >=0.10", # check
-	"numpy", # check
-	"pandas", # check
-	"xarray", # check
-	"xugrid", # check
-	"meshkernel", # check
-	"pyproj", # check
-	"shapely >=0.2.0", # check
-	"scipy", # check
-	"networkx >= 3.0", # check
-	"sympy", # check
-	"momepy >= 0.5.4", # check
-	"hydromt_delft3dfm", # ????
-	"pygraphviz", # check
-	"matplotlib", # check
-	"contextily", # check
-	"community", # check
-	# "pygeos", # remove dependancy after new xugrid releases
-	# "pyflwdir >=0.5.4",
-	# "scikit-learn",
-	# "statsmodels",
+	"hydromt >=0.9.0",
+	"hydromt_delft3dfm", 
+	"geopandas", 
+	"shapely", 
+	"pyproj", 
+	"numpy", 
+	"pandas", 
+	"xarray", 
+	"meshkernel",  # mesh
+	"xugrid",  # mesh
+	"networkx",  # graph
+	"community",  # graph
+	"momepy", # plot
+	"matplotlib", # plot
+	"contextily", # plot
+	"scipy", # statistics
+	# "scikit-learn", # statistics
+	# "statsmodels", # statistics
+	"sympy", # statistics
 ]
 
-requires-python = ">=3.9,<3.11" # support 3.11 after new meshkernelpy releases
+requires-python = ">=3.9"
 readme = "README.rst"
 classifiers = [
 	# https://pypi.python.org/pypi?%3Aaction=list_classifiers
@@ -44,7 +41,12 @@ classifiers = [
 dynamic = ['version']
 
 [project.optional-dependencies]
-test = ["pytest>=2.7.3", "pytest-cov", "black", "isort", "matplotlib"]
+dev = [
+    "black",       # linting
+    "isort",        # linting
+    "pip>=23.1.2", # needed for recursive dependencies
+]
+test = ["pytest>=2.7.3", "pytest-cov", "black", "matplotlib"]
 doc = [
 	"nbsphinx",
 	"sphinx",
@@ -52,10 +54,23 @@ doc = [
 	"pydata-sphinx-theme",
 	"sphinx_autosummary_accessors",
 ]
+examples = [
+  "jupyterlab",      # run examples in jupyter notebook
+  "notebook",        # jupyter integration
+  "cartopy",		 # plot examples
+]
+
+[project.urls]
+Documentation = "https://xldeltares.github.io/hybridurb"
+Source = "https://github.com/xldeltares/hybridurb"
 
 [tool.black]
 line-length = 88
 target-version = ['py39']
+
+[build-system]
+requires = ["flit_core >=3.4.0,<4"]
+build-backend = "flit_core.buildapi"
 
 [tool.flit.sdist]
 include = ["hybridurb"]
@@ -66,6 +81,3 @@ filterwarnings = [
 	"ignore:distutils Version classes are deprecated:DeprecationWarning",
 ]
 
-[build-system]
-requires = ["flit_core >=3.4.0,<4"]
-build-backend = "flit_core.buildapi"
