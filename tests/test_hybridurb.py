@@ -22,7 +22,7 @@ def test_version():
 
 def test_runner():
     _runner = NowcastRunner(
-        root_dir=Path(EXAMPLEDIR) / ".\Antwerp\option1",
+        root_dir=Path(EXAMPLEDIR) / r".\Antwerp\option1",
         t0="201605300900",
     )
     _runner.run()

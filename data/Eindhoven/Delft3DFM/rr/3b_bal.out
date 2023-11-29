@@ -1,0 +1,22 @@
+ Results 3B calculation
+
+ Rainfall file                      : default.bui                                                                                                                     
+ Evaporation file                   : default.evp                                                                                                                     
+ Timestep size (s)                  :       60
+ Simulated period (hours)           :        2.00 for number of Events=     1
+
+
+ Summary results Sobek-RR Urban model 
+
+ Total area (m2)                    :  15973025.33
+ Total rainfall (m3)                :    316265.92
+ Total evaporation (m3)             :         0.00
+ Total infiltration depressions (m3):         0.00
+ Total infiltration from runoff (m3):         0.00
+ Total storage change (m3)          :      7986.65
+ Total inflow sewer excl. DWD (m3)  :    308279.26
+ Total DWA people (m3)              :         0.00
+ Total DWA companies (m3)           :         0.00
+ Total inflow sewer (m3)            :    308279.26
+ Balance error (m3)                 :         0.01 ( 0.0000%)
+ Maximum balance error in simulation:           0.01
