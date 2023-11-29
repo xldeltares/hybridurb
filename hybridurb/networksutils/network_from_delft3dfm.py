@@ -50,18 +50,18 @@ class Delft3dfmNetworkWrapper:
     setup_network
     """
 
-    _config_fn: Path = Path(__file__).with_name("config.yml")
+    _config_fn: Path
+    _networkmodel: Optional[NetworkModel] = None
     _data_catalog: Path = Path(__file__).with_name("data_catalog_delft3dfm.yml")
     _networkopt: Path = Path(__file__).with_name("networkopt_delft3dfm.yml")
-    _networkmodel: Optional[NetworkModel] = None
 
-    def __init__(self, config_fn: Path = _config_fn) -> None:
+    def __init__(self, config_fn: Path) -> None:
         """
         The constructor for the Delft3dfmNetworkWrapper class.
 
         :param config_fn: The configuration file path. Defaults to _config_fn.
         """
-        self.config = configread(config_fn=config_fn)
+        self.config = configread(config_fn=config_fn, abs_path=True)
         self._init_global()
         self.logger = setuplog(
             __name__, self.root.joinpath("hybridurb.log"), log_level=10
@@ -72,7 +72,7 @@ class Delft3dfmNetworkWrapper:
         Initializes global settings from the configuration file.
         """
         _global = self.config.get("global", {})
-        self.root = Path(_global.get("root", Path.cwd))
+        self.root = _global.get("root")
         crs = _global.get("crs")
         self.crs = None if not crs else CRS.from_user_input(crs)
         region = _global.get("region")
@@ -88,10 +88,13 @@ class Delft3dfmNetworkWrapper:
         if not _config:
             return None
 
-        self.logger.debug("get_geoms_from_model based on: model_root, mdu_fn")
         model_root = Path(_config.get("model_root"))
         mdu_fn = _config.get("mdu_fn")
         geoms_dir = model_root.joinpath("_geoms_dir")
+
+        self.logger.debug(
+            f"get_geoms_from_model based on: model_root = {model_root}, mdu_fn = {mdu_fn}"
+        )
 
         if self._is_dir_valid(geoms_dir):
             # update mode
