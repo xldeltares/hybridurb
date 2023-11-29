@@ -1,0 +1,10 @@
+global:
+  root: c:/Developments/hybridurb/data/Eindhoven
+  region: c:/Developments/hybridurb/data/Eindhoven/region.geojson
+  crs: 28992
+get_geoms_from_model:
+  model_root: ../data/Eindhoven/Delft3DFM
+  mdu_fn: dflowfm/FLOWFM.mdu
+setup_networkmodel:
+  global:
+    snap_offset: 1
