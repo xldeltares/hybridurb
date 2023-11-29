@@ -18,10 +18,10 @@ dependencies = [
 	"momepy", # plot
 	"matplotlib", # plot
 	"contextily", # plot
-	"scipy", # statistics
-	# "scikit-learn", # statistics
-	# "statsmodels", # statistics
-	"sympy", # statistics
+	"scipy", # runner
+	"scikit-learn", # runner
+	"statsmodels", # runner
+	"sympy", # runner
 	"patsy", # runner
 ]
 
