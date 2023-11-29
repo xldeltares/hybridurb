@@ -1,0 +1,17 @@
+[General]
+FileType=DelftIO HIA file
+DioVersion=Deltares, DELFTIO Version 1.09.00.000000, May 16 2023, 20:03:04
+HiaVersion=1.00
+ 
+[DioCheck]
+NumberOfParameters=13
+NumberOfLocations=16131
+T0=2023. 1. 1 00:00:00
+TimeStepUnit=Second
+TimeStepMultiplyer=86400
+ 
+[Long Parameters]
+9=Very flat closed paved
+ 
+[Long Locations]
+ 

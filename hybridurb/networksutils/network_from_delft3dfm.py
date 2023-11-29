@@ -20,7 +20,7 @@ simplify_network: get flow path
 import os
 import logging
 from pathlib import Path
-from typing import Union
+from typing import Union, Optional
 
 import geopandas as gpd
 import numpy as np
@@ -31,7 +31,9 @@ from hydromt.data_catalog import DataCatalog
 from hydromt.cli.cli_utils import parse_config
 from hydromt.log import setuplog
 
-from .delft3dfm_utils import Delft3DFM
+
+from hydromt_delft3dfm import DFlowFMModel
+import hybridurb.networksutils.delft3dfm_utils as delft3dfm_utils
 from hybridurb.hydraulics_utils import HydraulicUtils
 from .network import NetworkModel
 
@@ -48,21 +50,18 @@ class Delft3dfmNetworkWrapper:
     setup_network
     """
 
-    _config_fn = Path(__file__).with_name("config.yml")
-    _data_catalog = Path(__file__).with_name("data_catalog_delft3dfm.yml")
-    _networkopt = Path(__file__).with_name(
-        "networkopt_delft3dfm.ini"
-    )  # FIXME switch to yml
-    _delft3dfmmodel: Delft3DFM = None
-    _networkmodel: NetworkModel = None
+    _config_fn: Path
+    _networkmodel: Optional[NetworkModel] = None
+    _data_catalog: Path = Path(__file__).with_name("data_catalog_delft3dfm.yml")
+    _networkopt: Path = Path(__file__).with_name("networkopt_delft3dfm.yml")
 
-    def __init__(self, config_fn: Path = _config_fn) -> None:
+    def __init__(self, config_fn: Path) -> None:
         """
         The constructor for the Delft3dfmNetworkWrapper class.
 
         :param config_fn: The configuration file path. Defaults to _config_fn.
         """
-        self.config = configread(config_fn=config_fn)
+        self.config = configread(config_fn=config_fn, abs_path=True)
         self._init_global()
         self.logger = setuplog(
             __name__, self.root.joinpath("hybridurb.log"), log_level=10
@@ -73,7 +72,7 @@ class Delft3dfmNetworkWrapper:
         Initializes global settings from the configuration file.
         """
         _global = self.config.get("global", {})
-        self.root = Path(_global.get("root", Path.cwd))
+        self.root = _global.get("root")
         crs = _global.get("crs")
         self.crs = None if not crs else CRS.from_user_input(crs)
         region = _global.get("region")
@@ -89,21 +88,32 @@ class Delft3dfmNetworkWrapper:
         if not _config:
             return None
 
-        geoms_dir = self.root.joinpath(_config.get("geoms_dir", "geoms_dir"))
-        model_dir = self.root.joinpath(_config.get("model_dir"))
+        model_root = Path(_config.get("model_root"))
+        mdu_fn = _config.get("mdu_fn")
+        geoms_dir = model_root.joinpath("_geoms_dir")
+
+        self.logger.debug(
+            f"get_geoms_from_model based on: model_root = {model_root}, mdu_fn = {mdu_fn}"
+        )
 
         if self._is_dir_valid(geoms_dir):
+            # update mode
             self.logger.info(f"reading geoms from {geoms_dir}")
             geoms = self._read_geoms(geoms_dir, self.crs)
-        elif self._is_dir_valid(model_dir):
-            logging.info(f"reading model from {model_dir}")
-            geoms = self.get_geoms(model_dir, self.crs, None, geoms_dir)
+        elif self._is_dir_valid(model_root):
+            # build mode
+            logging.info(f"reading model from {model_root}")
+            geoms = self._get_geoms(
+                model_root, mdu_fn, self.crs, self.region, geoms_dir
+            )
         else:
-            self.logger.error("could not perform get_geoms_from_model.")
+            self.logger.error(
+                "could not perform get_geoms_from_model. no model_root is found"
+            )
             return None
 
-        self._init_datacatalog(geoms_dir, geoms.keys())
-        self._init_networkopt(geoms_dir, geoms.keys())
+        self._init_datacatalog(geoms_dir.absolute(), geoms.keys())
+        self._init_networkopt(geoms_dir.absolute(), geoms.keys())
         self._init_region()
 
         return geoms
@@ -120,30 +130,27 @@ class Delft3dfmNetworkWrapper:
         else:
             return False
 
-    def get_geoms(
+    def _get_geoms(
         self,
-        model_dir: Path,
+        model_root: Path,
+        mdu_fn: str,
         crs: CRS,
-        region: Union[None, gpd.GeoDataFrame] = None,
+        clip_region: Union[None, gpd.GeoDataFrame] = None,
         geoms_dir: Path = None,
     ):
         """
         Retrieves geometries from a given model directory.
 
-        :param model_dir: The model directory.
+        :param model_root: The model root directory.
+        :param mdu_fn: The mdu file as relative path to model_root.
         :param crs: The coordinate reference system.
-        :param region: The region. Defaults to None.
+        :param clip_region: The region to clip geoms. Defaults to None.
+        :param geoms_dir: the dir to save the geoms.
         :return: The geometries from the model directory.
         """
-        mdu_fn = "dflowfm\FlowFM.mdu"
-        mdu = model_dir / mdu_fn
-        self.logger.info(f"read model from {mdu}.")
-        model = Delft3DFM()
-        model.read_model(mdu, crs=crs)
-        model.extract_geometries(region=region)
-        geoms = model.convert_geometries()
-        if geoms_dir is not None:
-            model.save_geometries(geoms_dir)
+        geoms = delft3dfm_utils.get_geometries_from_model(
+            model_root, mdu_fn, crs, clip_region, geoms_dir
+        )
         return geoms
 
     def _read_geoms(self, geoms_dir: Path, crs: CRS):
@@ -188,7 +195,7 @@ class Delft3dfmNetworkWrapper:
         # add report
         networkopt_dict = {
             "setup_basemaps": {
-                "region": "{'geom': 'region.geojson'}",
+                "region": {"geom": "region.geojson"},
                 "report": f"network from delft3dfm geometires: {geom_root}",
             }
         }
@@ -234,9 +241,9 @@ class Delft3dfmNetworkWrapper:
         # Build model
         model.build(opt=opt)
         # FIXME: below belongs to a seperate function
-        model.setup_dag(
-            target_query="structuretype == 'weir'", report="dag targeting weir"
-        )
+        # model.setup_dag(
+        #     target_query="structuretype == 'weir'", report="dag targeting weir"
+        # )
         model.write()
 
         # change the current working directory back

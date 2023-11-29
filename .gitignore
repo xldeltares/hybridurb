@@ -129,6 +129,3 @@ dmypy.json
 .pyre/
 .vscode/launch.json
 .vscode/settings.json
-
-# working in process data
-data/Eindhoven
