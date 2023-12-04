@@ -1,4 +1,5 @@
 """
+UPDATE MARKER
 Most recent modification on 20190731 (after revision)
 (adapted to python3)
 
@@ -70,6 +71,7 @@ python_version = sys.version_info[0]
 # cores
 import networkx as nx
 import pandas as pd
+import geopandas as gpd
 import numpy as np
 # tools
 import os,sys,time, datetime, pickle, copy, collections
@@ -83,7 +85,8 @@ from scipy.signal import convolve
 from sklearn.preprocessing import scale
 from random import randint
 # ploting
-import pygraphviz
+#import graphviz
+#import pygraphviz
 import matplotlib.pyplot as plt
 import matplotlib._pylab_helpers
 from matplotlib.cm import get_cmap
@@ -674,11 +677,11 @@ def recoverLEAF(X2, X1):
     gone_nodes = [n for n in X1.nodes() if n not in X2.nodes()]
     # draw gone nodes
     G = nx.DiGraph(X1.subgraph(gone_nodes))
-    pos = graphviz_layout(G, prog='dot', args='')
-    plt.figure()
-    nx.draw(G, pos, node_size=20, alpha=0.5, node_color="blue", with_labels=False)
-    nx.draw(G.subgraph([n for n in G.nodes if len(G.out_edges(n)) == 0 ]), pos,\
-        node_size=20, alpha=0.5, node_color="black", with_labels=True)
+    # pos = graphviz_layout(G, prog='dot', args='')
+    # plt.figure()
+    # nx.draw(G, pos, node_size=20, alpha=0.5, node_color="blue", with_labels=False)
+    # nx.draw(G.subgraph([n for n in G.nodes if len(G.out_edges(n)) == 0 ]), pos,\
+    #     node_size=20, alpha=0.5, node_color="black", with_labels=True)
     X3 = nx.compose(X2, G)
     print('left over partitions:' + str(nx.number_connected_components(nx.Graph(G))))
     print('original components: ' + str(nx.number_connected_components(nx.Graph(X2))))
@@ -764,8 +767,11 @@ def calcCost(X):
     for e in X.edges(data = True):
         us,ds = e[:2]
         # calculate time of travel is the pipe has velocity and gradient is not 0
-        if e[2]['shape'] != 0 and e[2]['gradient_mdm'] != 0:
+
+        if e[2]['shape'] != 0 and e[2]['gradient_mdm'] != 0 and e[2]['shape'] != None:
+
             condshape = e[2]['shape'].upper()
+
             w = e[2]['width_m']
             h = e[2]['height_m']
             s = e[2]['sediment_m']
@@ -871,7 +877,8 @@ def makeDAG(X):
         for n in sub_network.nodes:
             path = nx.dijkstra_path(sub_network, n, o, \
                     weight = lambda u, v, e: e['Zloss1_m'] + e['Zloss2_m'] + e['Zloss3_m']) ##########
-            X_new.add_path(path)
+            if len(path) > 1:
+                X_new.add_edge(path[0], path[1]) # It used to add the entire path. Now I add edges manually one-by-one
     for u, v, weight in X_new.edges(data=True):
         # get the old data from X
         xdata = X[u].get(v)
@@ -896,6 +903,7 @@ def calcDAGTc(X, method = 'CW_cap'):
         ns = list(nx.dfs_postorder_nodes(XX,n))
         sub_network = XX.subgraph(ns)
         X.nodes[n]['us_area_m2'] = sum(sub_network.nodes[k]['cont_area_m2'] for k in ns) # ( for exclude n ass: if k != n)
+        X.nodes[n]['us_count'] = len(sub_network.nodes) # ( for exclude n ass: if k != n)
         X.nodes[n]['gross_us_area_m2'] = sum(sub_network.nodes[k]['gross_area_m2'] for k in ns) # ( for exclude n ass: if k != n)
         if method == 'CW_cap':
             # calculate trvel time using colebrook-white under capacity condition
@@ -977,8 +985,12 @@ def calcDAGStaticFI(X):
             dist = np.sqrt((X.nodes[n]['geo'][0] - X.nodes[o]['geo'][0])**2 + (X.nodes[n]['geo'][1] - X.nodes[o]['geo'][1])**2)
             delta_h = X.nodes[n]['chambroof_m'] - X.nodes[o]['chambfloor_m']
             delta_h_0 = X.nodes[n]['chambfloor_m'] - X.nodes[o]['chambfloor_m']
-            X.nodes[n]['hydraulicgradient_o'] = delta_h/dist
-            X.nodes[n]['hydraulicgradient_o_0'] = delta_h_0/dist
+            if delta_h != 0:
+                X.nodes[n]['hydraulicgradient_o'] = delta_h/dist
+                X.nodes[n]['hydraulicgradient_o_0'] = delta_h_0/dist
+            else:
+                X.nodes[n]['hydraulicgradient_o'] = 0.001
+                X.nodes[n]['hydraulicgradient_o_0'] = 0.001
             X.nodes[n]['pathlength_o'] = nx.dijkstra_path_length(sub_network, n, o, \
                             weight = lambda u, v, e: e['length_m'])    
             X.nodes[n]['gross_us_area_m2'] = sum(X.nodes[k]['gross_area_m2'] for k in list(nx.dfs_postorder_nodes(XX,n)))
@@ -1299,7 +1311,7 @@ def calcQ(X, sim_n_RR):
 # calculate return period
 # NEW 4/12/2018
 # Update 5/12/2018 only calculate for outfall, and only calculate if > T=0.1 else 0
-# Updated 06/02/2019 should not include nodes who has no runoff area, because rainfall is homogenius (more or less)
+# Updated 06/02/2019 should not include nodes who has no runoff area, because rainfall is homogeneous (more or less)
 def calcOT(X, sim_n_RR):
     outfalls = [x for x in X.nodes if X.nodes[x]['type'].lower() in ['outfall']]
     sim_o_T = {o:np.nan * sim_n_RR.iloc[:,1].values for o in outfalls}
@@ -1335,11 +1347,54 @@ def calcF(X, sim_n_FV):
 # added max node runoff
 # Update 4/12/2018
 # add consideration of Return period T of outfall
-def summarizeEvent(X, sim_n_RO, sim_nc_RO, sim_nc_Q, sim_n_F, sim_n_FV, sim_o_T = None):
+def summarizeEvent(X, sim_nc_RO, sim_nc_Q, sim_nc_IT, sim_nc_ITC, sim_o_T, sim_n_F, sim_n_FV):
+    nodes = dict(X.nodes(data = True))
+    outfalls = [x for x in X.nodes if X.nodes[x]['type'].lower() in ['outfall']]
+    T_func_h = T_func()
+    # static FIS (characteristics)
+    table_Cs = pd.DataFrame.from_dict(nodes, orient='index'); table_Cs = table_Cs.drop(outfalls)
+    table_Cs.loc[:,'chambdepth_m'] = table_Cs.loc[:,'chambvolume_m3'].values/table_Cs.loc[:,'chambarea_m2'].values
+    # dynamic FIs - option 1 - max at q
+    table_Qs = sim_nc_Q.max().to_frame(name = 'nc_Qmq_m3ds'); table_Qs = table_Qs.drop([o for o in outfalls if o in table_Qs.index])
+    for n in table_Qs.index:
+        mq_idx = sim_nc_Q[n].idxmax()
+        table_Qs.loc[n, 'nc_ROmq_m3ds'] = sim_nc_RO.loc[mq_idx, n]
+        table_Qs.loc[n, 'o_Tmq_yr'] = sim_o_T.loc[mq_idx, nodes[n]['Outfall']]
+
+    # dynamic FIs - option 2 - max at itc
+    table_Ts = sim_nc_ITC.max().to_frame(name = 'nc_ITCmitc_yr'); table_Ts = table_Ts.drop([o for o in outfalls if o in table_Ts.index])
+    for n in table_Ts.index:
+        mitc_idx = sim_nc_ITC[n].idxmax()
+        table_Ts.loc[n, 'nc_ITTmitc_yr'] = T_func_h.calc(np.array([sim_nc_IT.loc[mitc_idx, n], 5]))
+        table_Ts.loc[n, 'nc_ITCTmitc_yr'] = (T_func_h.calc(np.array([sim_nc_ITC.loc[mitc_idx, n], X.nodes[n]['tc_min']])) if X.nodes[n]['tc_min'] else np.nan)
+        table_Ts.loc[n, 'o_Tmitc_yr'] = sim_o_T.loc[mitc_idx, nodes[n]['Outfall']]
+    # dynamic FIs - opention 1 2 - max at outfall
+    table_Os = pd.DataFrame(index=table_Ts.index)
+    for n in table_Os.index:
+        if 'Outfall' in nodes[n].keys() and n not in outfalls:
+            mo_idx = sim_o_T[nodes[n]['Outfall']].idxmax()
+            table_Os.loc[n, 'o_Tmo_yr'] = sim_o_T.loc[mo_idx, nodes[n]['Outfall']]
+    # flooding
+    table_Fs = pd.concat([sim_n_F.max(), sim_n_FV.max()], axis=1, sort=False)
+    table_Fs.columns = ['n_F', 'n_FVm_m3']
+    # together
+    table = pd.concat([table_Cs, table_Qs, table_Ts, table_Os, table_Fs], axis = 1, sort=False)
+    table_columns=[
+        'chambdepth_m', 'us_area_m2', 'Qo_m3ds',
+        'nc_Qmq_m3ds', 'nc_ROmq_m3ds', 'o_Tmq_yr',
+        'nc_ITTmitc_yr', 'nc_ITCTmitc_yr', 'o_Tmitc_yr',
+        'o_Tmo_yr',
+        'n_F', 'n_FVm_m3',
+    ]
+    return table[table_columns]
+
+
+
+def summarizeEventOld(X, sim_n_RO, sim_nc_RO, sim_nc_Q, sim_n_F, sim_n_FV, sim_o_T = None):
     nodes = dict(X.nodes(data = True))
     outfalls = [x for x in X.nodes if X.nodes[x]['type'].lower() in ['outfall']]
     # static FIS (characetersitcs)
-    table_Cs = pd.DataFrame.from_dict(nodes, orient='index'); table_Cs = table_Cs.drop(outfalls)
+    table_Cs = pd.DataFrame.from_dict(nodes, orient='index'); table_Cs = table_Cs.drop(outfalls) # Read node att
     # dynamic FIs
     table_Qs = sim_nc_Q.max().to_frame(name = 'nc_Qmq_m3ds'); table_Qs = table_Qs.drop([o for o in outfalls if o in table_Qs.index])
     for n in table_Qs.index:
@@ -1353,7 +1408,7 @@ def summarizeEvent(X, sim_n_RO, sim_nc_RO, sim_nc_Q, sim_n_F, sim_n_FV, sim_o_T 
         #     table_Qs.loc[n, 'nc_Tmq_yr'] =  np.nan
         table_Qs.loc[n, 'nc_ROmq_m3ds'] = sim_nc_RO.loc[mq_idx, n]
         table_Qs.loc[n, 'n_ROmq_m3ds'] = sim_n_RO.loc[mq_idx, n]
-        table_Qs.loc[n, 'o_Tmq_yr'] = sim_o_T.loc[mq_idx, nodes[n]['Outfall']] 
+        table_Qs.loc[n, 'o_Tmq_yr'] = sim_o_T.loc[mq_idx, nodes[n]['Outfall']]
         if 'Outfall' in nodes[n].keys() and n not in outfalls:
             mo_idx = sim_o_T[nodes[n]['Outfall']].idxmax()
             if isinstance(mo_idx, float) and np.isnan(mo_idx):
@@ -1386,14 +1441,16 @@ def summarizeEvent(X, sim_n_RO, sim_nc_RO, sim_nc_Q, sim_n_F, sim_n_FV, sim_o_T 
     table_Fs = pd.concat([sim_n_F.max(), sim_n_FV.max()], axis=1, sort=False)
     table_Fs.columns = ['n_F', 'n_FVm_m3']
     # together
-    table = pd.concat([table_Cs, table_Qs, table_Fs], axis = 1, sort=False)
-    table_columns=[ 
+    table = pd.concat([table_Cs, table_Qs, table_Fs], axis = 1, sort=False) # Constants, discharges, floods
+
+
+    table_columns=[
         u'nc_Qmq_m3ds', u'nc_ROmq_m3ds', u'n_ROmq_m3ds', 'o_Tmq_yr', # , u'o_Qmq_m3ds','nc_Tmq_yr',
         u'nc_Qmnro_m3ds', u'nc_ROmnro_m3ds', u'n_ROmnro_m3ds', 'o_Tmnro_yr', # u'o_Qmnro_m3ds',
         u'Qcap_m3ds', u'Qmax_m3ds',  u'Qmin_m3ds',
         u'Outfall', u'nc_Qmo_m3ds', u'nc_ROmo_m3ds', u'n_ROmo_m3ds', 'o_Tmo_yr',  # u'o_Qcap_m3ds', u'o_Qmax_m3ds','o_Tmq_yr','o_Tm_yr',
         u'n_F', u'n_FVm_m3',
-        u'chambvolume_m3', u'chambarea_m2', u'cont_area_m2', u'us_area_m2',
+        u'chambvolume_m3', u'chambarea_m2', u'cont_area_m2', u'us_area_m2', u'chambdepth_m',
         # 'Path_L_m', 'Path_rl_m', 'Path_dZ_m', 'Path_Slope_mdm', 
         # 'Path_Zloss1_m', 'Path_Zloss2_m', 'Path_Zloss_m', 'Path_Hf_m',
     ]
@@ -1530,12 +1587,12 @@ def drawGraphTree(X):
     G = nx.DiGraph()
     G.add_nodes_from(X.nodes())
     G.add_edges_from(X.edges())
-    pos = graphviz_layout(G, prog='dot', args='')
-    plt.figure(figsize=(20,10))
-    nx.draw(G, pos, node_size=20, alpha=0.5, node_color="blue", with_labels=False)
-    nx.draw(G.subgraph([n for n in G.nodes if n in outfalls]), pos,\
-        node_size=20, alpha=0.5, node_color="red", with_labels=True)
-    plt.title('optimised sewer network: no of components ' + str(nx.number_connected_components(nx.Graph(G))))
+    # pos = graphviz_layout(G, prog='dot', args='')
+    # plt.figure(figsize=(20,10))
+    # nx.draw(G, pos, node_size=20, alpha=0.5, node_color="blue", with_labels=False)
+    # nx.draw(G.subgraph([n for n in G.nodes if n in outfalls]), pos,\
+    #     node_size=20, alpha=0.5, node_color="red", with_labels=True)
+    # plt.title('optimised sewer network: no of components ' + str(nx.number_connected_components(nx.Graph(G))))
     return G
 
 
@@ -1595,37 +1652,36 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import roc_curve, auc, precision_recall_curve, average_precision_score, f1_score, balanced_accuracy_score, accuracy_score, precision_score, recall_score
 from inspect import signature
 import statsmodels.api as sm
-from patsy import dmatrices
+import patsy
 from scipy import stats
 ########################################################
 # functions                 
 ########################################################
 
-def readTablemq(X, keyword, version):
+def readTablemq(X, filename, version, tablepath):
     # read calibration table
     # !NOTE: the calculaiton method might be wrong, need more physical meaning
     # output:
     #           d: all nodes
     #           f_d: only flooding nodes
     np.seterr(divide='ignore', invalid='ignore')
-    table = pd.read_csv(r"C:\Users\u0107727\Desktop\FloodMAPPING\gent\Calibration events\\" + version +
-                            "\Calibration_" + keyword + '.csv', index_col=[0])
+    table = pd.read_csv(tablepath + filename, index_col=[0])
     d = table.copy()
     d.loc[:,'d'] = d.loc[:,'chambvolume_m3'].values/d.loc[:,'chambarea_m2'].values
     d.loc[:,'NS'] = d.loc[:,'n_ROmq_m3ds'].values*300 / d.loc[:,'chambvolume_m3'].values
     d.loc[:,'PS'] = d.loc[:,'nc_Qmq_m3ds'].values / d.loc[:,'Qmax_m3ds'].values
     d.loc[:,'OT'] = d.loc[:,'o_Tmq_yr']
-    d = d[['NS', 'PS', 'd',  'OT', 'n_F', 'n_FVm_m3']]
-    d = d.replace([np.inf, -np.inf], np.nan)
-    d = d.dropna(how = 'any', axis = 0)
-    d['n_F'] = d.loc[:,'n_F'].astype(int)
-    d['Event'] = keyword
-    d = d.dropna(how = 'any')
+    d2 = d[['NS', 'PS', 'd',  'OT', 'n_F', 'n_FVm_m3']]
+    d2 = d2.replace([np.inf, -np.inf], np.nan)
+    d2 = d2.dropna(how = 'any', axis = 0)
+    d2['n_F'] = d2.loc[:,'n_F'].astype(int)
+    d2['Event'] = filename
+    d2 = d.dropna(how = 'any')
     # flooding data
-    f_nodes = list(d.loc[d['n_F']>0, 'n_F'].index)
-    f_d = d.loc[f_nodes, :]
+    f_nodes = list(d.loc[d2['n_F']>0, 'n_F'].index)
+    f_d = d2.loc[f_nodes, :]
     print('there are ' + str(len(f_nodes)) + ' flooding nodes!')
-    return d, f_d
+    return d2#, f_d
 
 # NEW! 21/01/2019
 # consider independent time series (with regard to maximum timing)
@@ -1860,4 +1916,119 @@ def getPredictors(X, sim_n_RO, sim_nc_RO, sim_nc_Q, sim_o_T):
     d = d[['NS', 'PS', 'd',  'OT','Cat', 'flooding_time']]
     d = d.replace([np.inf, -np.inf], np.nan); d = d.dropna(how = 'any', axis = 0)
     return d
-    
+
+def runGraphModel_2options(X, rgRR, rg_id):
+    def WallingfordMethod(A, S, i10):
+        # S - slope (m/m)
+        # A - the area (m2) of the surface, for example the area of the paved surface
+        # i10 - running ten minute average of rainfall intensity
+        # Now using T2 rainfall 73mm/hr
+        if S<0.002: S = 0.002
+        if A<1000: A = 1000
+        if A>10000: A = 10000
+        C = 0.117 * S ** (-0.13) * A ** (0.24)
+        i_ = 0.5 * (1 + i10)
+        k = C * i_ ** (-0.39 )
+        return k
+    def linearReservior(R, A):
+        # R is effective rainfall, m^3/hr - numpy array
+        # A is reservior constant - hr
+        # Q is m3/s
+        A = 1./A
+        Q = np.zeros(len(R))
+        for i in range(1, len(R)):
+            Q[i] = Q[i-1]*np.exp(-A*5./60) + R[i-1]*(1-np.exp(-A*5./60))
+        return Q/3600.
+    ###################################
+    # Assign rainfall
+    ###################################
+    # sim_n_RR: rainfall profile at node
+    sim_n_RR_dur = len(rgRR)
+    sim_n_RR = {i[0]:rgRR.loc[:,str(i[0])].values \
+                        for n, i in rg_id.iterrows()}
+    #
+    ###################################
+    # Bottom up method
+    ###################################
+    # sim_n_RO: Runoff generation and routing at node
+    #   1. fixed runoff method (sim_n_RO = I(R,t)*cont_area * 0.8), not output, integrated in the enxt step
+    #   2. single linear reservior following wallingford method, rainfall = T2
+    sim_n_RO = {n:linearReservior(sim_n_RR[n]/(10**3) * X.nodes[n]['cont_area_m2']*0.8,
+                WallingfordMethod(X.nodes[n]['cont_area_m2'], X.nodes[n]['subcatslope'], 73.))
+                for n in sim_n_RR.keys()} # m3/s
+    # sim_nc_RO: Runoff accumulation in lumped sewer subnetwork
+    #   simple sum
+    # sim_nc_Q: Flow routing in lumped sewer subnetwork
+    #   single linear reservior with tc as time constant
+    sim_nc_RO = {}
+    sim_nc_Q = {}
+    XX = X.reverse()
+    for n in XX.nodes:
+        if X.nodes[n]['tc_min'] > 0:
+            # upstream catchment
+            ns = list(nx.dfs_postorder_nodes(XX,n))
+            # include only nodes with contributing subcatchment
+            ns_ = set(ns) - (set(ns) - set(sim_n_RO.keys()))
+            # runoff - accumulation in lumped sewer subnetwork manholes
+            if len(ns_) > 0:
+                RO_t = np.array([sim_n_RO[nsi] for nsi in ns_]).sum(axis=0) # m3/s
+                # Flow routing in lumped sewer subnetwork
+                Q_t = linearReservior(RO_t*3600, X.nodes[n]['tc_min']/60) #m3/s
+            else:
+                RO_t = np.zeros(shape = (sim_n_RR_dur,))
+                Q_t = np.zeros(shape = (sim_n_RR_dur,))
+            sim_nc_RO[n] = RO_t[:]
+            sim_nc_Q[n] = Q_t[:]
+    ###################################
+    # Top down method
+    ###################################
+    # sim_nc_II: mean  instatenous rainfallprofile at lumped sewer subnetwork
+    #   simple average
+    sim_nc_IT = {}
+    # sim_nc_ITC: rainfall over concentration time at lumppedsewer subnetwork
+    #   simple convolve
+    sim_nc_ITC = {}
+    for n in XX.nodes:
+        if X.nodes[n]['tc_min']:
+            # upstream catchment
+            ns = list(nx.dfs_postorder_nodes(XX,n))
+            # include only nodes with contributing rg
+            ns_ = set(ns) - (set(ns) - set(sim_n_RR.keys()))
+            if len(ns_) > 0:
+                # rainfall averaging
+                I_t = np.array([sim_n_RR[nsi] for nsi in ns_]).mean(axis=0) # should not include 0
+                # rainfall rounting
+                window = int(X.nodes[n]['tc_min']/5)
+                I_tc = np.convolve(I_t, np.ones(window,)/window, mode='full')[:I_t.size]
+            else:
+                I_t = np.zeros(shape = (sim_n_RR_dur,))
+                I_tc = np.zeros(shape = (sim_n_RR_dur,))
+            sim_nc_IT[n] = I_t[:]
+            sim_nc_ITC[n] = I_tc[:]
+    ###################################
+    # shared method
+    ###################################
+    # sim_o_T
+    outfalls = [x for x in X.nodes if X.nodes[x]['type'].lower() in ['outfall']]
+    sim_o_T = {o:np.nan*np.zeros(shape = (sim_n_RR_dur,)) for o in outfalls}
+    for o in outfalls:
+        I_tc =  sim_nc_ITC[o]
+        I_I1month = I_idf(1./12., X.nodes[o]['tc_min'])
+        sim_o_T[o] = np.array([T_idf(intensity, X.nodes[o]['tc_min'])\
+                    if intensity > I_I1month else 0. for intensity in I_tc])
+    # result
+    sim_temp = {o:np.nan*np.zeros(shape = (sim_n_RR_dur,)) for o in outfalls}
+    for o in outfalls:
+        I_tc = sim_nc_ITC[o]
+        tc = X.nodes[o]['tc_min']
+        sim_temp[o] = I_tc / tc
+
+    sim_nc_RO = pd.DataFrame.from_dict(sim_nc_RO); sim_nc_RO.index = rgRR.index
+    sim_nc_Q = pd.DataFrame.from_dict(sim_nc_Q); sim_nc_Q.index = rgRR.index
+    sim_nc_IT = pd.DataFrame.from_dict(sim_nc_IT); sim_nc_IT.index = rgRR.index
+    sim_nc_ITC = pd.DataFrame.from_dict(sim_nc_ITC); sim_nc_ITC.index = rgRR.index
+    sim_o_T = pd.DataFrame.from_dict(sim_o_T); sim_o_T.index = rgRR.index
+    sim_temp = pd.DataFrame.from_dict(sim_temp); sim_temp.index = rgRR.index
+    return sim_nc_RO, sim_nc_Q, sim_nc_IT, sim_nc_ITC, sim_o_T, sim_temp
+
+

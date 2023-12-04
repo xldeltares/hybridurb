@@ -33,15 +33,15 @@ from floodMAPPING_funcs_p3 import *
 #  path
 ##########################################################
 # raw network
-path = r"I:\FloodMAPPING\Antwerp\\"
+path = "J:\\LocalWorkspace\\hybridtest\\"
 X = read_gpickle(path + "sewer\\" + "sewer_graph_networkx_v4.0.gpickle")
 
-# add boundry condition 
-outfall_level_filename = path + "sewer\\" + "waterhoogten-normaal.csv"
-levels = readOutfallLevels(outfall_level_filename, hours = 6)
-levels = {k.strip():levels[k] for k in levels.keys()}
-outfalls = [x for x in X.nodes if X.nodes[x]['type'].lower() in ['outfall']]
-X = reverseOutfall(X, levels = levels) 
+# add boundry condition
+# outfall_level_filename = path + "sewer\\" + "waterhoogten-normaal.csv"
+# levels = readOutfallLevels(outfall_level_filename, hours = 6)
+# levels = {k.strip():levels[k] for k in levels.keys()}
+# outfalls = [x for x in X.nodes if X.nodes[x]['type'].lower() in ['outfall']]
+X = reverseOutfall(X)#, levels = levels)
 
 # -------------------- prepare for optimisation --> DAG
 
@@ -49,10 +49,10 @@ X = reverseOutfall(X, levels = levels)
 X1 = X.copy()
 
 # 2. compute cost
-X2 = calcCost(X1) 
+X2 = calcCost(X1)
 
 # 3. multiDiGraph 2 uniDiGraph
-X3 = multi2uniDiGraph(X2) 
+X3 = multi2uniDiGraph(X2)
 
 # 4. make DAG based on Zloss1 + Zloss2 + Zloss3
 X4 = makeDAG(X3)
@@ -64,10 +64,10 @@ while count < 10:
 
     # 5. split multi pathways based on minimum cost path
     X5 = makeTREE(X4)
-    
+
     # 6. recover leftover leaves
     X6 = recoverLEAF(X5, X3)  # NOTE! using X3 not X4
-    
+
     X_optimised = X6.copy()
     if len(nx.difference(X4, X_optimised).edges()) != 0:
         X4 = X_optimised.copy()
@@ -99,8 +99,10 @@ del [X1, X2, X3, X4, X5, X6, X7, X8]
 ##########################################################
 G = drawGraphTree(X9)
 
+#nx.draw(G)
+
 # save all the figures
-fig_folder = r'./FloodMAPPING/Figures_' + datetime.datetime.now().strftime("%d-%m-%y")
+fig_folder = path + 'FloodMAPPING\\Figures_' + datetime.datetime.now().strftime("%d-%m-%y")
 figures=[manager.canvas.figure
          for manager in matplotlib._pylab_helpers.Gcf.get_all_fig_managers()]
 
@@ -108,7 +110,7 @@ if not os.path.exists(fig_folder):
     os.makedirs(fig_folder)
 
 for i, figure in enumerate(figures):
-    figure.savefig(fig_folder + r'/figure%d.png' % i)
+    figure.savefig(fig_folder + '\\figureA%d.png' % i)
 
 print('Figures saved at: ' + fig_folder)
 
@@ -132,5 +134,38 @@ for o in outfalls:
 df = df[df.iloc[:,1]>0]
 df['ID'] = np.arange(len(df))
 df.to_csv(path + "sewer\\" + "sewer_graph_networkx_v4.1_outfalls.csv")
+print(sys.path)
 
+
+
+# plot xy
+plt.figure(figsize=(8, 8))
+plt.axis("off")
+plt.title("Flow")
+pos = {xy: X9.nodes[xy]['geo'][0:2] for xy in X9.nodes()}
+
+# base
+nx.draw(X, pos=pos, node_size=0, with_labels=False, arrows=False, node_color='gray', edge_color='silver', width=1)
+
+nodelist_types = X9.nodes.data("type")
+node_names = []
+type_list = []
+colour_list = []
+for a, b in nodelist_types:
+    node_names.append(a)
+    type_list.append(b)
+    if b == 'outfall':
+        colour_list.append('green')
+    else:
+        colour_list.append('red')
+
+
+# nodes dag
+nx.draw_networkx_nodes(X9, pos=pos, nodelist=G.nodes(), node_size=40, node_color=colour_list)
+# edges dag
+edge_width = [X9.nodes[d[0]]['us_count'] / 100 for d in X9.edges()]
+nx.draw_networkx_edges(X9, pos=pos, edgelist=X9.edges(), arrows=False, width=[float(i) / (max(edge_width) + 0.1) * 20 + 0.5 for i in edge_width])
+#nx.draw_networkx_nodes(X9, pos=pos, nodelist=X9.nodes(), node_size=50, node_shape="*", node_color=colour_list)
+
+plt.savefig("J:\\Plotspace\\MapThicknesses.png", bbox_inches='tight')
 
