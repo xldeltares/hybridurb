@@ -3,13 +3,12 @@ from pathlib import Path
 from typing import Optional
 
 import geopandas as gpd
+import hydromt_delft3dfm
 import numpy as np
 import pandas as pd
-
+from hydromt_delft3dfm import DFlowFMModel
 from pyproj import CRS
 
-from hydromt_delft3dfm import DFlowFMModel
-import hydromt_delft3dfm
 from hybridurb.hydraulics_utils import HydraulicUtils
 
 logger = logging.getLogger(__name__)

@@ -1,13 +1,15 @@
 """Implement plugin model class"""
 from __future__ import annotations
-from typing import Union
+
 import glob
 import itertools
 import logging
+import pickle
 from collections import Counter
 from os.path import basename, isfile, join
 from pathlib import Path
-import pickle
+from typing import Union
+
 import geopandas as gpd
 import hydromt
 import matplotlib.pyplot as plt
@@ -19,7 +21,6 @@ import xarray as xr
 from hydromt import gis_utils, io, raster
 from hydromt.models.model_api import Model
 from shapely.geometry import box
-
 from workflows import *
 
 __all__ = ["NetworkModel"]
