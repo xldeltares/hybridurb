@@ -24,7 +24,7 @@ Quick start using developer install:
 
     $ git clone git@github.com:xldeltares/hybridurb.git
     $ cd hybridurb
-    $ conda create --name hybridurb-dev python=3.11 -c conda-forge -y
+    $ conda create -f envs/environment_dev.yaml
     $ conda activate hybridurb-dev
     $ pip install -e .
 

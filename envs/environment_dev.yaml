@@ -4,6 +4,7 @@ channels:
   - conda-forge
 
 dependencies:
+  - python=3.11
   - pip
   - flit>=3.4
   - hydromt>=0.9.0 
