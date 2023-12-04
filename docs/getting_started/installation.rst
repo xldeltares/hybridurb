@@ -9,7 +9,7 @@ Prerequisites
 
 Python and conda
 -----------------------
-You'll need **Python 3.8 or greater** and conda as an environment manager.
+You'll need **Python 3.9 or greater** and conda as an environment manager.
 These package managers help you to install (Python) packages and manage environment
 such that different installations do not conflict.
 

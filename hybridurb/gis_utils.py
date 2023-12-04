@@ -1,23 +1,20 @@
 # -*- coding: utf-8 -*-
 
 import logging
-from matplotlib.backends.backend_pdf import PdfPages
-import matplotlib.pyplot as plt
-import shapely
-import geopandas as gpd
 import os
-import pandas as pd
-import geopandas as gpd
-from shapely.geometry import LineString, Point
-import matplotlib.pyplot as plt
-import logging
-import networkx as nx
-import contextily as ctx
 import random
-from networkx.drawing.nx_agraph import graphviz_layout
-from scipy.spatial import distance
-from scipy.spatial import KDTree
+
+import contextily as ctx
+import geopandas as gpd
+import matplotlib.pyplot as plt
+import networkx as nx
 import numpy as np
+import pandas as pd
+import shapely
+from matplotlib.backends.backend_pdf import PdfPages
+from networkx.drawing.nx_agraph import graphviz_layout
+from scipy.spatial import KDTree, distance
+from shapely.geometry import LineString, Point
 
 logger = logging.getLogger(__name__)
 

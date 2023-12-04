@@ -1,21 +1,22 @@
 # -*- coding: utf-8 -*-
-import logging
-import geopandas as gpd
-import networkx as nx
-from shapely.geometry import Point
-import momepy
-import os
-import pandas as pd
-import matplotlib.pyplot as plt
-import contextily as ctx
-import random
-from networkx.drawing.nx_agraph import graphviz_layout
-import community
 import itertools
-import numpy as np
-from hybridurb.gis_utils import *
+import logging
+import os
+import random
 
+import community
+import contextily as ctx
+import geopandas as gpd
+import matplotlib.pyplot as plt
+import momepy
+import networkx as nx
+import numpy as np
+import pandas as pd
 from hydromt_delft3dfm.workflows import find_nearest_branch
+from networkx.drawing.nx_agraph import graphviz_layout
+from shapely.geometry import Point
+
+from hybridurb.gis_utils import *
 
 logger = logging.getLogger(__name__)
 

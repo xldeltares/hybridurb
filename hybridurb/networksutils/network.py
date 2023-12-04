@@ -1,11 +1,13 @@
 """Implement plugin model class"""
 from __future__ import annotations
-from typing import Union
+
 import glob
 import logging
+import pickle
 from os.path import basename, join
 from pathlib import Path
-import pickle
+from typing import Union
+
 import geopandas as gpd
 import hydromt
 import matplotlib.pyplot as plt
@@ -17,8 +19,8 @@ import xarray as xr
 from hydromt.models.model_api import Model
 from shapely.geometry import box
 
-from hybridurb.gis_utils import snap_branch_ends, reduce_gdf_precision, multipage
 import hybridurb.graph_utils as graph
+from hybridurb.gis_utils import multipage, reduce_gdf_precision, snap_branch_ends
 
 __all__ = ["NetworkModel"]
 logger = logging.getLogger(__name__)

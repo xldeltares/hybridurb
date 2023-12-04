@@ -17,26 +17,24 @@ simplify_network: get flow path
     output: model/graph.gpickle
   
 """
-import os
 import logging
+import os
 from pathlib import Path
-from typing import Union, Optional
+from typing import Optional, Union
 
 import geopandas as gpd
 import numpy as np
-from pyproj import CRS
-
+from hydromt.cli.cli_utils import parse_config
 from hydromt.config import configread, configwrite
 from hydromt.data_catalog import DataCatalog
-from hydromt.cli.cli_utils import parse_config
 from hydromt.log import setuplog
-
-
 from hydromt_delft3dfm import DFlowFMModel
+from pyproj import CRS
+
 import hybridurb.networksutils.delft3dfm_utils as delft3dfm_utils
 from hybridurb.hydraulics_utils import HydraulicUtils
-from .network import NetworkModel
 
+from .network import NetworkModel
 
 logger = logging.getLogger(__name__)
 

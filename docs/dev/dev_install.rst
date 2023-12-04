@@ -3,10 +3,22 @@
 Developer installation guide
 ============================
 
-HybridUrb provides two ways to develop the package, using conda or poetry.
 
-Developer install using conda
------------------------------
+Conda as environment manager
+----------------------------
+We recomment using conda as environment manager. You can download and install it `here <https://docs.conda.io/projects/conda/en/latest/user-guide/install/download.html>`_. 
+
+
+After installation, we recommond install libmamba as the solver for its faster performance. See explaination `here <https://www.anaconda.com/blog/a-faster-conda-for-a-growing-community>`_.
+
+.. code-block:: console
+
+  $ conda install -n base conda-libmamba-solver
+  $ conda config --set solver libmamba
+
+
+Developer install of Hybridurb using conda
+------------------------------------------
 
 First, clone the Hybridurb ``git`` repo from `github <https://github.com/Deltares/hydromt.git>`_. 
 Navigate into the the code folder (where the envs folder and pyproject.toml are located):
@@ -18,11 +30,13 @@ Navigate into the the code folder (where the envs folder and pyproject.toml are 
     $ cd hybridurb
 
 
-Then, create and activate a development environment for HybridUrb:
+
+Then, make and activate a new hybridurb-dev conda environment based on the envs/environment_dev.yml
+file contained in the repository:
 
 .. code-block:: console
 
-    $ conda create --name hybridurb-dev python=3.11 -c conda-forge -y
+    $ conda create -f envs/environment_dev.yaml
     $ conda activate hybridurb-dev
 
 If you wish to make changes in HybridUrb, you should make an editable install of the plugin.

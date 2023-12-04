@@ -11,7 +11,7 @@ jobs:
     strategy:
       max-parallel: 5
       matrix:
-        python-version: [3.9]
+        python-version: [3.11]
         os: [windows-latest]
 
     steps:
@@ -39,7 +39,7 @@ jobs:
       run: python -m pytest
 
     - name: Autoformat 
-      if: ${{ (matrix.os == 'windows-latest') && (matrix.python-version == 3.8) }}
+      if: ${{ (matrix.os == 'windows-latest') && (matrix.python-version == 3.11) }}
       run: |
         python -m isort .
         python -m black .
@@ -47,4 +47,4 @@ jobs:
         git config --global user.email '${{ github.actor }}@users.noreply.github.com'
         git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY
         git checkout $GITHUB_HEAD_REF
-        git commit -am "autoformat: isort & black" && git push || true
+        git commit -am "autoformat: isort&black" && git push || true
