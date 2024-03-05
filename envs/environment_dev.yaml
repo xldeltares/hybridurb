@@ -1,4 +1,4 @@
-name: hybridurb-dev-test
+name: hybridurb-dev
 
 channels:
   - conda-forge
