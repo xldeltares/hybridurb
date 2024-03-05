@@ -24,7 +24,8 @@ Quick start using developer install:
 
     $ git clone git@github.com:xldeltares/hybridurb.git
     $ cd hybridurb
-    $ conda create -f envs/environment_dev.yaml
+    $ conda env create -f envs/environment_dev.yaml
+    REM In case of error about permission denied libbz2.dll, try admin installation
     $ conda activate hybridurb-dev
     $ pip install -e .
 
