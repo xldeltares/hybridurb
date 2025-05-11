@@ -24,8 +24,9 @@ Quick start using developer install:
 
     $ git clone git@github.com:xldeltares/hybridurb.git
     $ cd hybridurb
-    $ conda create -f envs/environment_dev.yaml
-    $ conda activate hybridurb-dev
+    $ conda create -n hybridurb python=3.11 -c conda-forge
+    $ conda activate hybridurb
+    $ pip install hydromt-delft3dfm
     $ pip install -e .
 
 Reference:

@@ -41,7 +41,7 @@ Unstructured grid maniputations:
 
 Hydrological model building libraries:
 
-* `hydromt <https://deltares.github.io/hydromt>`__
+* `hydromt-delft3dfm <https://deltares.github.io/hydromt_delft3dfm>`__
 
 
 Installation
