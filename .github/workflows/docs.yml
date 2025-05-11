@@ -30,7 +30,8 @@ jobs:
     
     - name: Install hybridurb
       run: |
-        pip install -e .
+        pip install flit
+        pip install -e .[tests][docs]
 
     - name: Build docs
       run: flit install

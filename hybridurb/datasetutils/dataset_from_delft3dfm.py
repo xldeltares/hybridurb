@@ -9,6 +9,35 @@ import pickle
 
 
 class Delft3dfmDatasetWrapper:
+    """
+    A class to manage, process, and visualize 1D Delft3D-FM simulation data as a network graph.
+
+    This class converts UGRID-1D NetCDF outputs into a `networkx.Graph`, attaches both dynamic 
+    (time series) and static (spatial) attributes, and provides utilities to integrate shapefile 
+    metadata and multiple simulations.
+
+    Args:
+        None on initialization. Use classmethods to load data.
+
+    Attributes:
+        G (networkx.Graph): Graph representing the 1D network with node and edge properties.
+        mesh1d (xugrid.Ugrid1d): UGRID-1D mesh extracted from the Delft3D-FM NetCDF file.
+        dataset_list (list[dict]): A list of simulation datasets, each containing:
+            - heads_raw_data (pandas.DataFrame): Node water levels over time.
+            - runoff_raw_data (pandas.DataFrame): Node runoff volumes over time.
+            - flowrate_raw_data (pandas.DataFrame): Edge flowrates over time.
+
+    Class Methods:
+        from_netcdf(path): Load mesh and build graph from a single NetCDF file.
+        load_from_pickle(path): Restore a saved wrapper instance.
+
+    Instance Methods:
+        graph_from_netcdf(path): Create graph from NetCDF (legacy use).
+        load_simulation_from_netcdf(path): Load simulation results and set time series attributes.
+        load_simulations_from_folder(folder): Load multiple simulations from a folder.
+        add_graph_attributes_from_shapefile(...): Attach spatial attributes from shapefiles.
+        save_to_pickle(path): Save full object state to disk.
+    """
     
     def __init__(self):
         """
