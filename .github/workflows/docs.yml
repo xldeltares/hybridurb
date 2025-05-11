@@ -13,20 +13,30 @@ jobs:
       run:
         shell: bash -l {0}
     steps:
-    - uses: actions/checkout@v3
-    - uses: conda-incubator/setup-miniconda@v2
+    - uses: actions/checkout@v4
+    
+    - name: Setup environment
+      uses: conda-incubator/setup-miniconda@v3
       with:
         python-version: "3.11"
-        miniforge-variant: Mambaforge
-        channels: conda-forge, defaults
+        channels: conda-forge
         channel-priority: strict
-        environment-file: envs/environment_dev.yaml
-        activate-environment: hybridurb-dev
+        conda-remove-defaults: "true"
+    
+    - name: Install hydromt-delft3dfm
+      run: |
+        pip install --upgrade pip
+        pip install hydromt-delft3dfm
+    
     - name: Install hybridurb
-      run: flit install
+      run: |
+        conda install flit
+        flit install
+
     - name: Sphinx build
       run: |
         sphinx-build docs _build
+    
     - name: Deploy
       uses: peaceiris/actions-gh-pages@v3
       if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}

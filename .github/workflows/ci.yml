@@ -1,6 +1,11 @@
 name: Python Package using Conda
 
-on: [push]
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
 
 jobs:
   build:
@@ -15,24 +20,22 @@ jobs:
         os: [windows-latest]
 
     steps:
-    - uses: actions/checkout@v3
-    - uses: conda-incubator/setup-miniconda@v2
+    - uses: uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
-        miniforge-variant: Mambaforge
-        channels: conda-forge, defaults
-        channel-priority: strict
-        environment-file: envs/environment_dev.yaml
-        activate-environment: hybridurb-dev
 
-    - name: Conda info
+    - name: Install hydromt_delft3dfm
       run: |
-       conda info
-       conda list
+        python -m pip install --upgrade pip
+        python -m pip install hydromt-delft3dfm
+        hydromt --models
      
-    - name: HybridUrb
+    - name: Install HybridUrb
       run: |
-        python -m pip install .
+        python -m pip install -e .
         python -m hybridurb.runners.main --help
         
     - name: Test with pytest

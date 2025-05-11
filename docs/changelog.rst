@@ -11,7 +11,7 @@ Unreleased
 
 Added
 -----
-- Build HybridUrb model from Delft3D FM model files.
+- Build HybridUrb model and dataset from Delft3D FM simulations.
 
 
 v0.1.0
