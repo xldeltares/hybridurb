@@ -22,20 +22,18 @@ class Delft3dfmDatasetWrapper:
     Attributes:
         G (networkx.Graph): Graph representing the 1D network with node and edge properties.
         mesh1d (xugrid.Ugrid1d): UGRID-1D mesh extracted from the Delft3D-FM NetCDF file.
-        dataset_list (list[dict]): A list of simulation datasets, each containing:
-            - heads_raw_data (pandas.DataFrame): Node water levels over time.
-            - runoff_raw_data (pandas.DataFrame): Node runoff volumes over time.
-            - flowrate_raw_data (pandas.DataFrame): Edge flowrates over time.
+        dataset_list (list[dict]): A list of simulation datasets, each containing time series data 
+            for nodes and edges.
 
     Class Methods:
-        from_netcdf(path): Load mesh and build graph from a single NetCDF file.
-        load_from_pickle(path): Restore a saved wrapper instance.
+        graph_from_netcdf(path): Create graph from NetCDF.
+        graph_from_pickle(path): Restore a saved wrapper instance from a pickle file.
 
     Instance Methods:
-        graph_from_netcdf(path): Create graph from NetCDF (legacy use).
-        load_simulation_from_netcdf(path): Load simulation results and set time series attributes.
-        load_simulations_from_folder(folder): Load multiple simulations from a folder.
         add_graph_attributes_from_shapefile(...): Attach spatial attributes from shapefiles.
+        load_dataset_from_folder(folder, node_vars, edge_vars): Load multiple simulations from a folder.
+        load_dataset_from_netcdf(path, node_vars, edge_vars): Load a single simulation dataset.
+        add_dynamic_attributes_from_dataset(...): Add dynamic attributes to the graph.
         save_to_pickle(path): Save full object state to disk.
     """
     
@@ -47,8 +45,8 @@ class Delft3dfmDatasetWrapper:
         self.mesh1d = None  # xugrid mesh1d object
         self.dataset_list = []  # List of simulation results (dict of DataFrames)
 
-
-    def graph_from_netcdf(self, path: str) -> nx.Graph:
+    @ classmethod
+    def graph_from_netcdf(cls, path: str) -> "Delft3dfmDatasetWrapper":
         """
         Create a NetworkX graph from a 1D UGRID Delft3D-FM NetCDF file.
 
@@ -93,53 +91,10 @@ class Delft3dfmDatasetWrapper:
                 length=float(ds["Network_edge_length"].values[i])
             )
 
-        self.G = G
-        self.mesh1d = mesh1d
-    
-    
-    def load_simulation_from_netcdf(self, path: str) -> dict:
-        """
-        Load simulation result from a single NetCDF file and update graph attributes.
-
-        Parameters:
-            path (str): Path to the NetCDF file.
-
-        Returns:
-            dict: Dictionary containing DataFrames for heads, flowrate, and runoff.
-        """
-        ds_xugrid = xu.open_dataset(path)
-        mesh1d = [g for g in ds_xugrid.grids if g.name == "mesh1d"][0]
-        ds = ds_xugrid
-
-        node_keys = [s.decode('utf-8').strip() if isinstance(s, bytes) else str(s).strip()
-                     for s in ds["mesh1d_node_id"].values]
-
-        edge_keys = []
-        for start_idx, end_idx in mesh1d.edge_node_connectivity:
-            start_key = node_keys[start_idx]
-            end_key = node_keys[end_idx]
-            edge_keys.append((start_key, end_key))
-
-        time_index = pd.to_datetime(ds["time"].values)
-        heads_df = pd.DataFrame(ds["mesh1d_s1"].values, columns=node_keys, index=time_index)
-        runoff_df = pd.DataFrame(ds["mesh1d_current_total_net_inflow_lateral"].values, columns=node_keys, index=time_index)
-        flowrate_df = pd.DataFrame(ds["mesh1d_q1"].values, columns=edge_keys, index=time_index)
-
-        # Set full time series as graph attributes
-        if self.G is not None:
-            h_x_dict = {col: heads_df[col] for col in heads_df.columns}
-            ro_x_dict = {col: runoff_df[col] for col in runoff_df.columns}
-            q_x_dict = {col: flowrate_df[col] for col in flowrate_df.columns}
-
-            nx.set_node_attributes(self.G, h_x_dict, name="h_x")
-            nx.set_node_attributes(self.G, ro_x_dict, name="runoff")
-            nx.set_edge_attributes(self.G, q_x_dict, name="q_x")
-        
-        return {
-            "heads_raw_data": heads_df,
-            "flowrate_raw_data": flowrate_df,
-            "runoff_raw_data": runoff_df
-        }
+        wrapper = cls()
+        wrapper.G = G
+        wrapper.mesh1d = mesh1d
+        return wrapper
 
     def add_graph_attributes_from_shapefile(
         self,
@@ -201,13 +156,14 @@ class Delft3dfmDatasetWrapper:
 
         self.G = G
 
-
-    def load_simulations_from_folder(self, folder: str, name_list: list[str] = None):
+    def load_dataset_from_folder(self, folder: str, node_vars: list = ["mesh1d_s1"], edge_vars: list = ["mesh1d_q1"], name_list: list = None):
         """
         Load multiple simulations from a folder of NetCDF files.
 
         Parameters:
             folder (str): Folder path containing NetCDF files.
+            node_vars (list, optional): List of node variable names to extract. Defaults to ["mesh1d_s1"].
+            edge_vars (list, optional): List of edge variable names to extract. Defaults to ["mesh1d_q1"].
             name_list (list[str], optional): List of filenames (without extension) to include.
         """
         dataset_list = []
@@ -215,16 +171,108 @@ class Delft3dfmDatasetWrapper:
         for fname in sorted(os.listdir(folder)):
             if not fname.endswith(".nc"):
                 continue
-            name_sim = os.path.splitext(fname)[0]
-            if name_list and name_sim not in name_list:
+            if name_list and (fname not in name_list):
                 continue
-
             path = os.path.join(folder, fname)
-            data = self.load_simulation_from_netcdf(path)
+            data = self.load_dataset_from_netcdf(path, node_vars=node_vars, edge_vars=edge_vars)
             dataset_list.append(data)
 
         self.dataset_list = dataset_list
 
+    def load_dataset_from_netcdf(self, path: str, node_vars: list = ["mesh1d_s1"], edge_vars: list = ["mesh1d_q1"]) -> dict:
+        
+        """	
+        This function loads a single NetCDF file and returns a dictionary of DataFrames
+        containing the time series data for the specified node and edge variables.  
+        The function also checks if the mesh1d in the dataset is identical to the existing mesh1d
+        in the wrapper. If not, it raises a ValueError.
+
+        Parameters:
+            path (str): Path to the NetCDF file.
+            node_vars (list, optional): List of node variable names to extract. Defaults to ["mesh1d_s1"].
+            edge_vars (list, optional): List of edge variable names to extract. Defaults to ["mesh1d_q1"].
+        
+        Returns:
+            dict: Dictionary containing DataFrames for node and edge variables.
+        """	
+        
+        if not os.path.exists(path):
+            raise FileNotFoundError(f"The file at path '{path}' does not exist.")
+        try:
+            print(f"Loading dataset from {path}")
+            ds_xugrid = xu.open_dataset(path)
+            mesh1d = [g for g in ds_xugrid.grids if g.name == "mesh1d"][0]
+        except KeyError as e:
+            raise KeyError(f"Error accessing the dataset. Ensure the file is a valid NetCDF file. Original error: {e}")
+
+        if self.mesh1d is not None:
+            if not np.array_equal(mesh1d.node_coordinates, self.mesh1d.node_coordinates) or \
+               not np.array_equal(mesh1d.edge_node_connectivity, self.mesh1d.edge_node_connectivity):
+                raise ValueError("Mesh1D in the dataset does not match the existing mesh1d.")
+            
+        ds = ds_xugrid
+
+        node_keys = [s.decode('utf-8').strip() if isinstance(s, bytes) else str(s).strip()
+                     for s in ds["mesh1d_node_id"].values]
+
+        edge_keys = []
+        for start_idx, end_idx in mesh1d.edge_node_connectivity:
+            start_key = node_keys[start_idx]
+            end_key = node_keys[end_idx]
+            edge_keys.append((start_key, end_key))
+
+        time_index = pd.to_datetime(ds["time"].values)
+        node_vars = node_vars or ["mesh1d_s1"]
+        edge_vars = edge_vars or ["mesh1d_q1"]
+
+        dataset = {}
+        for node_var in node_vars:
+            if node_var not in ds.variables:
+                raise ValueError(f"Node variable {node_var} not found in dataset.") 
+            dataset[node_var] = pd.DataFrame(ds[node_var].values, columns=node_keys, index=time_index)
+        for edge_var in edge_vars:
+            if edge_var not in ds.variables:
+                raise ValueError(f"Edge variable {edge_var} not found in dataset.") 
+            dataset[edge_var] = pd.DataFrame(ds[edge_var].values, columns=edge_keys, index=time_index)    
+        
+        return dataset
+
+    def add_dynamic_attributes_from_dataset(self,
+        dataset: dict,
+        attribute_cols: list[str],
+        target: Literal["node", "edge"] = "node",
+        col_mapping: dict[str, str] = None):
+        """
+        Add dynamic attributes from a dataset to the graph.
+
+        Parameters:
+            dataset (dict): Dictionary containing time series data for nodes and edges. Read from `load_dataset_from_netcdf` or 
+                item of `load_dataset_from_folder`.  
+            attribute_cols (list[str]): List of attribute names to add.
+            target (str): Whether to apply attributes to 'node' or 'edge'.
+            col_mapping (dict[str, str]): Optional mapping from dataset keys to graph attribute names.
+        """
+        if self.G is None:
+            raise ValueError("Graph is not initialized.")
+
+        col_mapping = col_mapping or {}
+        for attr in attribute_cols:
+            mapped_attr = col_mapping.get(attr, attr)
+            if target == "node":
+                if isinstance(dataset[attr], pd.DataFrame):
+                    data_dict = {node: dataset[attr][node] for node in dataset[attr].columns}
+                    nx.set_node_attributes(self.G, data_dict, name=mapped_attr)
+                else:
+                    raise ValueError(f"Dataset attribute {attr} is not a DataFrame.")
+            elif target == "edge":
+                if isinstance(dataset[attr], pd.DataFrame):
+                    data_dict = {edge: dataset[attr][edge] for edge in dataset[attr].columns}
+                    nx.set_edge_attributes(self.G, data_dict, name=mapped_attr)
+                else:
+                    raise ValueError(f"Dataset attribute {attr} is not a DataFrame.")
+            else:
+                raise ValueError("Target must be 'node' or 'edge'.")
+        
 
     def save_to_pickle(self, path: str):
         """
@@ -246,8 +294,9 @@ class Delft3dfmDatasetWrapper:
         except Exception as e:
             print(f"Failed to save: {e}")
 
+
     @classmethod
-    def load_from_pickle(cls, path: str) -> "Delft3dfmDatasetWrapper":
+    def graph_from_pickle(cls, path: str) -> "Delft3dfmDatasetWrapper":
         """
         Load a Delft3dfmDatasetWrapper object from a pickle file.
 
@@ -268,20 +317,3 @@ class Delft3dfmDatasetWrapper:
         print(f"Wrapper loaded from {path}")
         return wrapper
 
-    @classmethod
-    def from_netcdf(cls, path: str) -> "Delft3dfmDatasetWrapper":
-        """
-        Create a wrapper instance from a 1D UGRID Delft3D-FM NetCDF (map) file,
-        including both the graph and simulation time series.
-
-        Parameters:
-            path (str): Path to the NetCDF file.
-
-        Returns:
-            Delft3dfmDatasetWrapper: New instance with graph, mesh, and time series.
-        """
-        wrapper = cls()
-        wrapper.graph_from_netcdf(path)
-        sim_data = wrapper.load_simulation_from_netcdf(path)
-        wrapper.dataset_list = [sim_data]
-        return wrapper
