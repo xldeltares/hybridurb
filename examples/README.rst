@@ -24,10 +24,10 @@ To install or update in an existing environment (hybridurb environment), do:
   $ pip install "hybridurb[examples]"
 
 
-Build a model
--------------
+Build a model from Delft3D FM Simulation
+----------------------------------------
 
-Building a HybirdUrb model from a Delft3D FM model is provided as iPython notebook for Eindhoven. 
+Building a HybirdUrb model from a Delft3D FM Simulation is provided as iPython notebook for Eindhoven. 
 
 Finally, start a jupyter lab server inside the **examples** folder 
 after activating the **hybridurb** environment, see below.
@@ -36,8 +36,8 @@ Alternatively, you can run the notebooks from `Visual Studio Code <https://code.
 
 .. code-block:: console
 
-  $ conda activate hybridurb-dev
-  $ cd hybridurb-dev/examples
+  $ conda activate hybridurb
+  $ cd hybridurb/examples
   $ jupyter notebook
 
 
