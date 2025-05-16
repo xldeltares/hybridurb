@@ -50,6 +50,7 @@ Installation
 For now, HybridUrb only supports a developer installation, which means setting up the package in a way that allows you to modify its source code. This is typically used by contributors or advanced users who want to work on the development of the package itself.
 
 .. code-block:: console
+
     git clone https://github.com/xldeltares/hybridurb.git
     cd hybridurb
     conda create -n hybridurb python=3.11 -c conda-forge
