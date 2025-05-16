@@ -39,25 +39,4 @@ This returns the available arguments for HybridUrb.
           --help       Show this message and exit.
 
 
-Build a model
--------------
-Not yet implemented.
-
-Run a model
------------
-Run the Antwerp model in nowcast mode using nowcasts produced at 201605300900:
-
-.. code-block:: console
-
-    $ python -m hybridurb.runners.main .\examples\Antwerp\option1 --mode nowcast --t0 201605300900
-
-
-Run a model in Delft-FEWS
--------------------------
-Run a model in `Delft-FEWS`_ context involves running also the pre- and post-adaptor (example not enclosed):
-
-.. code-block:: console
-
-    $ python -m hybridurb.runners.main .\examples\Antwerp\option1 --mode nowcast --t0 201605300900 --fews
-
-.. _Delft-FEWS: https://oss.deltares.nl/web/delft-fews>
+For more usage examples, go to the examples directory to check.
