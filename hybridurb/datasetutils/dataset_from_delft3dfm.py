@@ -196,11 +196,18 @@ class Delft3dfmDatasetWrapper:
             dict: Dictionary containing DataFrames for node and edge variables.
         """	
         
-        ds_xugrid = xu.open_dataset(path)
-        mesh1d = [g for g in ds_xugrid.grids if g.name == "mesh1d"][0]
+        if not os.path.exists(path):
+            raise FileNotFoundError(f"The file at path '{path}' does not exist.")
+        try:
+            print(f"Loading dataset from {path}")
+            ds_xugrid = xu.open_dataset(path)
+            mesh1d = [g for g in ds_xugrid.grids if g.name == "mesh1d"][0]
+        except KeyError as e:
+            raise KeyError(f"Error accessing the dataset. Ensure the file is a valid NetCDF file. Original error: {e}")
 
         if self.mesh1d is not None:
-            if not mesh1d.equals(self.mesh1d):
+            if not np.array_equal(mesh1d.node_coordinates, self.mesh1d.node_coordinates) or \
+               not np.array_equal(mesh1d.edge_node_connectivity, self.mesh1d.edge_node_connectivity):
                 raise ValueError("Mesh1D in the dataset does not match the existing mesh1d.")
             
         ds = ds_xugrid
