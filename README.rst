@@ -22,7 +22,7 @@ Quick start using developer install:
 
 .. code-block:: console
 
-    $ git clone git@github.com:xldeltares/hybridurb.git
+    $ git clone https://github.com/xldeltares/hybridurb.git
     $ cd hybridurb
     $ conda create -n hybridurb python=3.11 -c conda-forge
     $ conda activate hybridurb

@@ -20,7 +20,7 @@ jobs:
         os: [windows-latest]
 
     steps:
-    - uses: uses: actions/checkout@v4
+    - uses: actions/checkout@v4
 
     - name: Set up Python
       uses: actions/setup-python@v4
@@ -36,13 +36,14 @@ jobs:
     - name: Install HybridUrb
       run: |
         python -m pip install -e .
+        python -c "import hybridurb" || { echo 'hybridurb package not installed correctly'; exit 1; }
         python -m hybridurb.runners.main --help
         
     - name: Test with pytest
       run: python -m pytest
 
     - name: Autoformat 
-      if: ${{ (matrix.os == 'windows-latest') && (matrix.python-version == 3.11) }}
+      if: ${{ matrix.os == 'windows-latest' && matrix.python-version == 3.11 }}
       run: |
         python -m isort .
         python -m black .
@@ -50,4 +51,4 @@ jobs:
         git config --global user.email '${{ github.actor }}@users.noreply.github.com'
         git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY
         git checkout $GITHUB_HEAD_REF
-        git commit -am "autoformat: isort&black" && git push || true
+        git commit -am "autoformat: isort&black" && git push || echo "Autoformat step failed. Please check the logs."
