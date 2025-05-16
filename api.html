@@ -1,0 +1,1151 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>API reference &#8212; HybridUrb 0.1 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="_static/documentation_options.js?v=2709fde1"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Developer installation guide" href="dev/dev_install.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">HybridUrb 0.1 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="getting_started/intro.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="user_guide/intro.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="examples_index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="dev/intro.html">
+    Developments
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#">
+    API reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="getting_started/intro.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="user_guide/intro.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="examples_index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="dev/intro.html">
+    Developments
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#">
+    API reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"></div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">API reference</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="api-reference">
+<span id="id1"></span><h1>API reference<a class="headerlink" href="#api-reference" title="Link to this heading">#</a></h1>
+<section id="module-hybridurb.networksutils.network">
+<span id="network"></span><h2>Network<a class="headerlink" href="#module-hybridurb.networksutils.network" title="Link to this heading">#</a></h2>
+<p>Implement plugin model class</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="hybridurb.networksutils.network.NetworkModel">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hybridurb.networksutils.network.</span></span><span class="sig-name descname"><span class="pre">NetworkModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode='w'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_fn=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_libs=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger=&lt;Logger</span> <span class="pre">hybridurb.networksutils.network</span> <span class="pre">(WARNING)&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deltares_data=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crs:</span> <span class="pre">int</span> <span class="pre">|</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">4326</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#hybridurb.networksutils.network.NetworkModel" title="Link to this definition">#</a></dt>
+<dd><p>General and basic API for models in HydroMT</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="hybridurb.networksutils.network.NetworkModel.crs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">crs</span></span><a class="headerlink" href="#hybridurb.networksutils.network.NetworkModel.crs" title="Link to this definition">#</a></dt>
+<dd><p>Returns coordinate reference system embedded in region.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hybridurb.networksutils.network.NetworkModel.read">
+<span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#hybridurb.networksutils.network.NetworkModel.read" title="Link to this definition">#</a></dt>
+<dd><p>Method to read the complete model schematization and configuration from file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hybridurb.networksutils.network.NetworkModel.read_forcing">
+<span class="sig-name descname"><span class="pre">read_forcing</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#hybridurb.networksutils.network.NetworkModel.read_forcing" title="Link to this definition">#</a></dt>
+<dd><p>Read forcing at &lt;root/?/&gt; and parse to dict of xr.DataArray</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hybridurb.networksutils.network.NetworkModel.read_graphmodel">
+<span class="sig-name descname"><span class="pre">read_graphmodel</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#hybridurb.networksutils.network.NetworkModel.read_graphmodel" title="Link to this definition">#</a></dt>
+<dd><p>Read graphmodel at &lt;root/?/&gt; and parse to networkx DiGraph</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hybridurb.networksutils.network.NetworkModel.read_results">
+<span class="sig-name descname"><span class="pre">read_results</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#hybridurb.networksutils.network.NetworkModel.read_results" title="Link to this definition">#</a></dt>
+<dd><p>Read results at &lt;root/?/&gt; and parse to dict of xr.DataArray</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hybridurb.networksutils.network.NetworkModel.read_states">
+<span class="sig-name descname"><span class="pre">read_states</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#hybridurb.networksutils.network.NetworkModel.read_states" title="Link to this definition">#</a></dt>
+<dd><p>Read states at &lt;root/?/&gt; and parse to dict of xr.DataArray</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hybridurb.networksutils.network.NetworkModel.read_staticgeoms">
+<span class="sig-name descname"><span class="pre">read_staticgeoms</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#hybridurb.networksutils.network.NetworkModel.read_staticgeoms" title="Link to this definition">#</a></dt>
+<dd><p>Read staticgeoms at &lt;root/?/&gt; and parse to dict of geopandas</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hybridurb.networksutils.network.NetworkModel.read_staticmaps">
+<span class="sig-name descname"><span class="pre">read_staticmaps</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#hybridurb.networksutils.network.NetworkModel.read_staticmaps" title="Link to this definition">#</a></dt>
+<dd><p>Read staticmaps at &lt;root/?/&gt; and parse to xarray Dataset</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hybridurb.networksutils.network.NetworkModel.setup_basemaps">
+<span class="sig-name descname"><span class="pre">setup_basemaps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">region</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">report</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#hybridurb.networksutils.network.NetworkModel.setup_basemaps" title="Link to this definition">#</a></dt>
+<dd><p>Define the model region.
+and setup the base graph - with geometry and id</p>
+<p>Adds model layer:
+* <strong>region</strong> geom: model region</p>
+<section id="parameters">
+<h3>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt>region: dict</dt><dd><p>Dictionary describing region of interest, e.g. {‘bbox’: [xmin, ymin, xmax, ymax]}.
+See <code class="xref py py-meth docutils literal notranslate"><span class="pre">parse_region()</span></code> for all options.</p>
+</dd>
+<dt><a href="#id2"><span class="problematic" id="id3">**</span></a>kwargs</dt><dd><p>Keyword arguments passed to _setup_graph(<a href="#id4"><span class="problematic" id="id5">**</span></a>kwargs)</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hybridurb.networksutils.network.NetworkModel.setup_dag">
+<span class="sig-name descname"><span class="pre">setup_dag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">G</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Graph</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targets</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loads</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">report</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">algorithm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'simple'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#hybridurb.networksutils.network.NetworkModel.setup_dag" title="Link to this definition">#</a></dt>
+<dd><p>This component prepares subgraph as Directed Acyclic Graphs (dag) using shortest path
+step 1: add a supernode to subgraph (representing graph - subgraph)
+step 2: use shortest path to prepare dag edges (source: node in subgraph; target: super node)</p>
+<p>in progress</p>
+<section id="id6">
+<h3>Parameters<a class="headerlink" href="#id6" title="Link to this heading">#</a></h3>
+<p>G : nx.Graph
+targets : None or String or list, optional (default = None)</p>
+<blockquote>
+<div><p>DAG super targets.
+If None, a target node will be any node with out_degree == 0.
+If a string, use this to query part of graph as a super target node.
+If a list, use targets as a list of target nodes.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>weight<span class="classifier">None or string, optional (default = None)</span></dt><dd><p>Weight used for shortest path.
+If None, every edge has weight/distance/cost 1.
+If a string, use this edge attribute as the edge weight.
+Any edge attribute not present defaults to 1.</p>
+</dd>
+<dt>loads<span class="classifier">None or list of strings, optional (default - None)</span></dt><dd><p>Load used from edges/nodes attributes.
+If None, every node/edge has a load equal to the total number of nodes upstream (nnodes), and number of edges upstream (nedges).
+If a list, use the attributes in the list as load.
+The attribute can be either from edges or from nodes.
+Any attributes that are not present defaults to 0.</p>
+</dd>
+<dt>algorithm<span class="classifier">string, optional (default = ‘simple’)</span></dt><dd><p>The algorithm to use to compute the dag.
+Supported options: ‘simple’, ‘flowpath’.
+Other inputs produce a ValueError.
+if ‘simple’, the input graph is treated as a undirected graph, the resulting graph might alter the original edges direction
+If ‘flowpath’, the input graph is treated as a directed graph, the resulting graph do not alter the original edges direction.
+Both option will have less edges. the missing edges indicates their insignificance in direction, i.e. both way are possible. # FIXME</p>
+</dd>
+</dl>
+</section>
+<section id="arguments">
+<h3>Arguments<a class="headerlink" href="#arguments" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt>use_super_target<span class="classifier">bool</span></dt><dd><p>whether to add a super target at the ends of all targets.
+True if the weight of DAG exist for all edges.
+False if the weight of DAG also need to consider attribute specified for targets.</p>
+</dd>
+</dl>
+</section>
+<section id="see-also">
+<h3>See Also<a class="headerlink" href="#see-also" title="Link to this heading">#</a></h3>
+<p>self._setup_dag</p>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hybridurb.networksutils.network.NetworkModel.setup_diagram">
+<span class="sig-name descname"><span class="pre">setup_diagram</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">G</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DiGraph</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subgraph_fn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#hybridurb.networksutils.network.NetworkModel.setup_diagram" title="Link to this definition">#</a></dt>
+<dd><p>function to derive flow diagram at certain target nodes/edges (in progress)</p>
+<dl class="simple">
+<dt>The target nodes/edges include:</dt><dd><p>nodes/edges identified using target_query
+nodes that are end nodes (out degree is 0)</p>
+</dd>
+</dl>
+<section id="id7">
+<h3>Arguments<a class="headerlink" href="#id7" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt>G: nx.DiGraph</dt><dd><p>Directional Graph</p>
+</dd>
+<dt>subgraph_fn:</dt><dd><p>Directional Graph node that are used as target to find predecessors</p>
+</dd>
+<dt>target_query: bool</dt><dd><p>Whether to include the input node in the results</p>
+</dd>
+<dt><a href="#id8"><span class="problematic" id="id9">**</span></a>kwargs:</dt><dd><p>weight = None, for setup_dag # FIXME
+report = None, for plotting</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hybridurb.networksutils.network.NetworkModel.setup_edge_attributes">
+<span class="sig-name descname"><span class="pre">setup_edge_attributes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edges_fn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">GeoDataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attribute_cols</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">snap_offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#hybridurb.networksutils.network.NetworkModel.setup_edge_attributes" title="Link to this definition">#</a></dt>
+<dd><p>This component update edges attributes to the graph model</p>
+<section id="id10">
+<h3>See Also<a class="headerlink" href="#id10" title="Link to this heading">#</a></h3>
+<p>_setup_edges</p>
+<dl class="simple">
+<dt><a href="#id11"><span class="problematic" id="id12">**</span></a>kwargs</dt><dd><p>Additional keywords have no effect but might be accepted for
+compatibility with numpy.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hybridurb.networksutils.network.NetworkModel.setup_edges">
+<span class="sig-name descname"><span class="pre">setup_edges</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edges_fn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">GeoDataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attribute_cols</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">snap_offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#hybridurb.networksutils.network.NetworkModel.setup_edges" title="Link to this definition">#</a></dt>
+<dd><p>This component setup edges locations and attributes to the graph model</p>
+<section id="id13">
+<h3>See Also<a class="headerlink" href="#id13" title="Link to this heading">#</a></h3>
+<p>_setup_edges</p>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hybridurb.networksutils.network.NetworkModel.setup_graph">
+<span class="sig-name descname"><span class="pre">setup_graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph_class</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">report</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#hybridurb.networksutils.network.NetworkModel.setup_graph" title="Link to this definition">#</a></dt>
+<dd><p>Setup the graph - with geometry and id</p>
+<section id="id14">
+<h3>Parameters<a class="headerlink" href="#id14" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt>graph_class: str</dt><dd><p>Class in networkx for creating the graph.</p>
+</dd>
+<dt>edges_fn: str</dt><dd><p>Name of the edges shp file specified in data yml.</p>
+</dd>
+<dt>edges_id_col: str</dt><dd><p>Columns name used in the shp file as the id of edges.</p>
+</dd>
+<dt>nodes_fn: str Not Implemented</dt><dd><p>Name of the nodes shp file specified in data yml.</p>
+</dd>
+<dt>nodes_id_col: str Not Implemented</dt><dd><p>Columns name used in the shp file as the id of nodes.</p>
+</dd>
+</dl>
+</section>
+<section id="notes">
+<h3>Notes<a class="headerlink" href="#notes" title="Link to this heading">#</a></h3>
+<p>This function can only be called once</p>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hybridurb.networksutils.network.NetworkModel.setup_node_attributes">
+<span class="sig-name descname"><span class="pre">setup_node_attributes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodes_fn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">GeoDataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attribute_cols</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">snap_offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#hybridurb.networksutils.network.NetworkModel.setup_node_attributes" title="Link to this definition">#</a></dt>
+<dd><p>This component update nodes attributes to the graph model</p>
+<section id="id15">
+<h3>See Also<a class="headerlink" href="#id15" title="Link to this heading">#</a></h3>
+<p>_setup_nodes</p>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hybridurb.networksutils.network.NetworkModel.setup_nodes">
+<span class="sig-name descname"><span class="pre">setup_nodes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodes_fn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">GeoDataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attribute_cols</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">snap_offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#hybridurb.networksutils.network.NetworkModel.setup_nodes" title="Link to this definition">#</a></dt>
+<dd><p>This component setup nodes locations and attributes to the graph model</p>
+<section id="id16">
+<h3>See Also<a class="headerlink" href="#id16" title="Link to this heading">#</a></h3>
+<p>_setup_nodes</p>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hybridurb.networksutils.network.NetworkModel.setup_partition">
+<span class="sig-name descname"><span class="pre">setup_partition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">G</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Graph</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subgraph_fn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">algorithm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'simple'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">report</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contracted</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#hybridurb.networksutils.network.NetworkModel.setup_partition" title="Link to this definition">#</a></dt>
+<dd><p>This component prepares the partition based on the connectivity of graph</p>
+<section id="id17">
+<h3>Parameters<a class="headerlink" href="#id17" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt>subgraph_fn<span class="classifier">str</span></dt><dd><p>Name of the subgraph instance.
+If None, self._graphmodel will be used for partition; the function will update the self._graphmodel
+if String and new, self._graphmodel will be used for partition; the function will create the instance in self._subgraphmodels
+if String and old, self._subgraphmodels[subgraph_fn] will be used for partition; the function will update the instance in self._subgraphmodels[subgraph_fn]</p>
+</dd>
+<dt>algorithm<span class="classifier">str</span></dt><dd><p>Algorithm to derive partitions from subgraph. Options: [‘simple’, ‘louvain’ ]
+testing methods:
+“simple” : based on connected components, every connected components will be considered as a partition (undirected)
+“flowpath” : based on direction of the edges, the graph is devided into a few partitions, each of which represents a target node with all of its sources.
+“louvain”: based on louvain algorithm (work in progress)  (undirected). “It measures the relative density of edges inside communities with respect to edges outside communities. Optimizing this value theoretically results in the best possible grouping of the nodes of a given network.”(from wikipedia)</p>
+</dd>
+<dt>contracted<span class="classifier">bool</span></dt><dd><p>Specify whether to build contracted graph from the parititons. So a new contracted graph is created, with a node representing a part of the graph; edges represernting the connectivity between the parts
+If True, each partition will be contracted to a node
+If False, no contraction is performed</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hybridurb.networksutils.network.NetworkModel.setup_pruning">
+<span class="sig-name descname"><span class="pre">setup_pruning</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">G</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Graph</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subgraph_fn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">algorithm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'simple'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_prune_query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_prune_query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loads</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_loads</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">report</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#hybridurb.networksutils.network.NetworkModel.setup_pruning" title="Link to this definition">#</a></dt>
+<dd><p>This component prepares the pruning the 1D flow network based on aggregation</p>
+<section id="id18">
+<h3>Parameters<a class="headerlink" href="#id18" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt>G: nx.Graph, optional (default = None)</dt><dd><p>Networkx graph to allow the function being called by another function.
+If None, the network graph from self._graphmodel or self._subgraphmodels[subgraph_fn] will be used</p>
+</dd>
+<dt>subgraph_fn<span class="classifier">str, optional (default - None)</span></dt><dd><p>Name of the subgraph instance.
+If None, self._graphmodel will be used for partition; the function will update the self._graphmodel
+if String and new, self._graphmodel will be used for partition; the function will create the instance in self._subgraphmodels
+if String and old, self._subgraphmodels[subgraph_fn] will be used for partition; the function will update the instance in self._subgraphmodels[subgraph_fn]</p>
+</dd>
+<dt>algorithm<span class="classifier">str, optional (default - simple)</span></dt><dd><p># FIXME: after creating dag, some edges are missing, also the edge attributes. Therefore, the loads are imcomplete. will not have influence if the loads are applied on nodes.
+Algorithm to derive partitions from subgraph. Options: [‘simple’, ‘auto’]
+testing methods:
+“simple” : based on user specifie.  The algorithm will prune the edges/nodes based on edge_prune_query and node_prune_query.
+“flowpath”: based on direction defined for edges.
+“auto” : based on analysis of network. The algrithm will prune the arborescence of the tree. A threshold can be set to determine whether an arborescence is small enough to be pruned.</p>
+</dd>
+<dt>weight<span class="classifier">None or string, optional (default = None)</span></dt><dd><p>Weight used for shortest path. Used in setup_dag.
+If None, every edge has weight/distance/cost 1.
+If a string, use this edge attribute as the edge weight.
+Any edge attribute not present defaults to 1.</p>
+</dd>
+<dt>loads<span class="classifier">None or list of strings, optional (default - None)</span></dt><dd><p>Load used from edges/nodes attributes. Used in setup_dag.
+If None, every node/edge has a load equal to the total number of nodes upstream (nnodes), and number of edges upstream (nedges).
+If a list, use the attributes in the list as load.
+The attribute can be either from edges or from nodes.
+Any attributes that are not present defaults to 0.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hybridurb.networksutils.network.NetworkModel.setup_subgraph">
+<span class="sig-name descname"><span class="pre">setup_subgraph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">G</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Graph</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subgraph_fn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">algorithm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">report</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#hybridurb.networksutils.network.NetworkModel.setup_subgraph" title="Link to this definition">#</a></dt>
+<dd><p>This component prepares the subgraph from a graph</p>
+<p>In progress</p>
+<section id="id19">
+<h3>Parameters<a class="headerlink" href="#id19" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt>subgraph_fn<span class="classifier">str</span></dt><dd><p>Name of the subgraph instance.
+If None, the function will update the self._graphmodel
+if String and new, the function will create the instance in self._subgraphmodels
+if String and old, the function will update the instance in self._subgraphmodels</p>
+</dd>
+</dl>
+</section>
+<section id="id20">
+<h3>Arguments<a class="headerlink" href="#id20" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt>edge_query<span class="classifier">str</span></dt><dd><p>Conditions to query the subgraph from graph.
+Applies on existing attributes of edges, so make sure to add the attributes first.</p>
+</dd>
+<dt>edge_target<span class="classifier">str</span></dt><dd><p>Conditions to request from subgraph the connected components that has the edge_target id
+Applies on existing id of edges.</p>
+</dd>
+<dt>node_query<span class="classifier">str</span></dt><dd><p>Conditions to query the subgraph from graph.
+Applies on existing attributes of nodes, so make sure to add the attributes first.</p>
+</dd>
+<dt>node_target<span class="classifier">str</span></dt><dd><p>Conditions to request from subgraph the connected components that has the node_target id
+Applies on existing id of nodes.</p>
+</dd>
+<dt>algorithm<span class="classifier">str = None</span></dt><dd><p>Algorithms to apply addtional processing on subgraph.
+Supported options: ‘patch’, ‘mst’, ‘dag’.
+If None, do not apply any method - disconnected subgraph
+If “patch”, patch paths from queried nodes in SG to an signed outlet
+if “mst”, steiner tree approximation for nodes in SG
+if “dag” dijkstra shortest length resulted Directed Acyclic Graphs (DAG)
+# FIXME: add weight as argument; combine setup_dag function</p>
+</dd>
+</dl>
+<p>weight : str = None</p>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hybridurb.networksutils.network.NetworkModel.write">
+<span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#hybridurb.networksutils.network.NetworkModel.write" title="Link to this definition">#</a></dt>
+<dd><p>Method to write the complete model schematization and configuration to file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hybridurb.networksutils.network.NetworkModel.write_forcing">
+<span class="sig-name descname"><span class="pre">write_forcing</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#hybridurb.networksutils.network.NetworkModel.write_forcing" title="Link to this definition">#</a></dt>
+<dd><p>write forcing at &lt;root/?/&gt; in model ready format</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hybridurb.networksutils.network.NetworkModel.write_graphmodel">
+<span class="sig-name descname"><span class="pre">write_graphmodel</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#hybridurb.networksutils.network.NetworkModel.write_graphmodel" title="Link to this definition">#</a></dt>
+<dd><p>write graphmodel at &lt;root/?/&gt; in model ready format</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hybridurb.networksutils.network.NetworkModel.write_results">
+<span class="sig-name descname"><span class="pre">write_results</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#hybridurb.networksutils.network.NetworkModel.write_results" title="Link to this definition">#</a></dt>
+<dd><p>write results at &lt;root/?/&gt; in model ready format</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hybridurb.networksutils.network.NetworkModel.write_states">
+<span class="sig-name descname"><span class="pre">write_states</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#hybridurb.networksutils.network.NetworkModel.write_states" title="Link to this definition">#</a></dt>
+<dd><p>write states at &lt;root/?/&gt; in model ready format</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hybridurb.networksutils.network.NetworkModel.write_staticgeoms">
+<span class="sig-name descname"><span class="pre">write_staticgeoms</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#hybridurb.networksutils.network.NetworkModel.write_staticgeoms" title="Link to this definition">#</a></dt>
+<dd><p>Write staticmaps at &lt;root/?/&gt; in model ready format</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hybridurb.networksutils.network.NetworkModel.write_staticmaps">
+<span class="sig-name descname"><span class="pre">write_staticmaps</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#hybridurb.networksutils.network.NetworkModel.write_staticmaps" title="Link to this definition">#</a></dt>
+<dd><p>Write staticmaps at &lt;root/?/&gt; in model ready format</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class" id="module-hybridurb.networksutils.network_from_delft3dfm">
+<dt class="sig sig-object py" id="hybridurb.networksutils.network_from_delft3dfm.Delft3dfmNetworkWrapper">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hybridurb.networksutils.network_from_delft3dfm.</span></span><span class="sig-name descname"><span class="pre">Delft3dfmNetworkWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_fn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#hybridurb.networksutils.network_from_delft3dfm.Delft3dfmNetworkWrapper" title="Link to this definition">#</a></dt>
+<dd><p>This is a wrapper class for the Delft3D flexible mesh (FM) type Network.</p>
+<p>Methods:
+setup_delft3dfm
+setup_network</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="hybridurb.networksutils.network_from_delft3dfm.Delft3dfmNetworkWrapper.get_geoms_from_model">
+<span class="sig-name descname"><span class="pre">get_geoms_from_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#hybridurb.networksutils.network_from_delft3dfm.Delft3dfmNetworkWrapper.get_geoms_from_model" title="Link to this definition">#</a></dt>
+<dd><p>Retrieves geometries from the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Geometries from the model. If the function is unable to retrieve the geometries, it returns None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hybridurb.networksutils.network_from_delft3dfm.Delft3dfmNetworkWrapper.get_network_from_geoms">
+<span class="sig-name descname"><span class="pre">get_network_from_geoms</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#hybridurb.networksutils.network_from_delft3dfm.Delft3dfmNetworkWrapper.get_network_from_geoms" title="Link to this definition">#</a></dt>
+<dd><p>setup network.
+Note will always overwrite.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hybridurb.networksutils.network_from_delft3dfm.Delft3dfmNetworkWrapper.get_network_properties">
+<span class="sig-name descname"><span class="pre">get_network_properties</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#hybridurb.networksutils.network_from_delft3dfm.Delft3dfmNetworkWrapper.get_network_properties" title="Link to this definition">#</a></dt>
+<dd><p>calculate physical properties that can only be computed in the network</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="hybridurb.networksutils.network_from_delft3dfm.mystring">
+<span class="sig-prename descclassname"><span class="pre">hybridurb.networksutils.network_from_delft3dfm.</span></span><span class="sig-name descname"><span class="pre">mystring</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\n\n'</span></em><a class="headerlink" href="#hybridurb.networksutils.network_from_delft3dfm.mystring" title="Link to this definition">#</a></dt>
+<dd><dl class="simple">
+<dt>get_geoms_from_model:</dt><dd><p>input:  region
+output: # geoms/<a href="#id21"><span class="problematic" id="id22">*</span></a>.geojson</p>
+</dd>
+<dt>setup_network:</dt><dd><p>_config: yaml secifying which files are read as nodes and which as edges
+input: geoms/<a href="#id23"><span class="problematic" id="id24">*</span></a>.geojson
+output: model/graph.gpickle</p>
+</dd>
+<dt>simplify_network: get flow path</dt><dd><p>_config: yaml secifying which files are read as nodes and which as edges
+input: geoms/<a href="#id25"><span class="problematic" id="id26">*</span></a>.geojson
+output: model/graph.gpickle</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-hybridurb.runners.runner">
+<span id="runner"></span><h2>Runner<a class="headerlink" href="#module-hybridurb.runners.runner" title="Link to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="hybridurb.runners.runner.NowcastRunner">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hybridurb.runners.runner.</span></span><span class="sig-name descname"><span class="pre">NowcastRunner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'EPSG:4326'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#hybridurb.runners.runner.NowcastRunner" title="Link to this definition">#</a></dt>
+<dd><p>Initializes the NowcastRunner class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>root_dir</strong> – Path object. Root directory containing model, input, and output subdirectories.</p></li>
+<li><p><strong>t0</strong> – String. The start time for simulation, in the format ‘yyyymmddHHMM’, e.g. ‘201605300900’.</p></li>
+<li><p><strong>name</strong> – String. A name for the runner instance, defaults to an empty string.</p></li>
+<li><p><strong>crs</strong> – String. Coordinate reference system for the geographic data, defaults to ‘EPSG:4326’.</p></li>
+</ul>
+</dd>
+</dl>
+<p>This method initializes various directory paths, the start time, and the name for the runner instance.
+It also calls the _initialise_model method to initialize the graph, lambda and statistical models.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="hybridurb.runners.runner.NowcastRunner.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#hybridurb.runners.runner.NowcastRunner.run" title="Link to this definition">#</a></dt>
+<dd><p>Runs the HybridUrb model using a bottom-up approach that includes detailed physical processes.</p>
+<p>This method runs the simulation by reading rainfall data, running the graph model, preparing predictors,
+performing logistic regression, and writing the output to a CSV file in the output directory.
+It also prints the time taken for the simulation.</p>
+<dl class="simple">
+<dt>Equations used for bottom up appraoch:</dt><dd><dl class="simple">
+<dt>‘n_F ~ C(Cat)+NS+PS+OT+d’</dt><dd><p>n_F: probability of flooding
+C(Cat): category of the noes
+NS: saturation of the nodes
+PS: saturation of the pipes
+OT: return periods of the outfall location
+d: depth of the nodes</p>
+</dd>
+</dl>
+</dd>
+<dt>Reads rainfall input and model files:</dt><dd><dl class="simple">
+<dt>Rainfall inputs:</dt><dd><p>[T0]_ens[ENSEMBLE_ID].csv and grid_to_nodes_mapping.csv.
+The former contains rainfall intensity (unit mm/h) per rainfall catchment for each ensemble member.
+The latter contains the mapping of rainfall catchments.</p>
+</dd>
+<dt>Model files:</dt><dd><p>GraphModel.gpickle: nx.Graph.  graph model of the sewer network.
+LambdaModel.pickle lambda model for boxcox transformation.
+StatsModel.pickle statistical model for the logistic regression.</p>
+</dd>
+</dl>
+</dd>
+<dt>Writes output:</dt><dd><dl class="simple">
+<dt>Probabilistic  output:</dt><dd><p>[T0]_ypred_summary.csv
+A summary table containing the probability of flooding of each node for each rainfall ensemble.
+Note that the output is not a timeseries.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hybridurb.runners.runner.NowcastRunner.run_fews">
+<span class="sig-name descname"><span class="pre">run_fews</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#hybridurb.runners.runner.NowcastRunner.run_fews" title="Link to this definition">#</a></dt>
+<dd><p>Runs the entire FEWS process, including the preadaptor, model run, and postadaptor.</p>
+<p>This method calls the run_preadaptor, run, and run_postadaptor methods in sequence to perform
+the entire FEWS process. It prints messages before and after each of these steps.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hybridurb.runners.runner.NowcastRunner.run_postadaptor">
+<span class="sig-name descname"><span class="pre">run_postadaptor</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#hybridurb.runners.runner.NowcastRunner.run_postadaptor" title="Link to this definition">#</a></dt>
+<dd><p>Runs a post-adaptor for FEWS.
+Converts outputs generated by HybridUrb to standard netcdf files supported by Delft-FEWS.</p>
+<p>This method prepares the output data, writes it to a netCDF file in the output directory,
+and also writes a grid file containing the node locations to a netCDF file in the output directory.</p>
+<dl class="simple">
+<dt>Probabilistic nputs generated by HybridUrb:</dt><dd><p>[T0]_ypred_summary.csv
+A summary table containing the probability of flooding of each node for each rainfall ensemble.
+Note that the output is not a timeseries.</p>
+</dd>
+<dt>Outputs supported by Delft-FEWS:</dt><dd><p>[T0]_predictions_at_nodes.nc.
+It contains the probabilistic predictions per model nodes.
+It has the dimension of realization which contains ENSEMBLE_ID.</p>
+</dd>
+</dl>
+<p>T0 (str)  is the start time of the input, supported format: yyyymmddHHMM, e.g. 201605300900;
+ENSEMBLE_ID (int) is the identifier of each ensemble member, known as dimension realization in [T0]_precipitation_on_catchments.nc</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hybridurb.runners.runner.NowcastRunner.run_preadaptor">
+<span class="sig-name descname"><span class="pre">run_preadaptor</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#hybridurb.runners.runner.NowcastRunner.run_preadaptor" title="Link to this definition">#</a></dt>
+<dd><p>Runs a pre-adaptor for FEWS.
+Converts rainfall inputs prepared by Delft-FEWS into rainfall inputs supported by HybridUrb.</p>
+<p>This method reads the rainfall data file prepared by Delft-FEWS, converts the unit from mm to mm/hour,
+and writes the converted data to a CSV file in the input directory.</p>
+<dl class="simple">
+<dt>Rainfall inputs prepared by Delft-FEWS:</dt><dd><p>[T0]_precipitation_on_catchments.nc.
+It contains the rainfall quantity (unit mm) per rainfall catchments.</p>
+</dd>
+<dt>Rainfall inputs supported by HybridUrb:</dt><dd><p>[T0]_ens[ENSEMBLE_ID].csv and grid_to_nodes_mapping.csv.
+The former contains rainfall intensity (unit mm/h) per rainfall catchment for each ensemble member.
+The latter contains the mapping of rainfall catchments.</p>
+</dd>
+</dl>
+<p>T0 (str)  is the start time of the input, supported format: yyyymmddHHMM, e.g. 201605300900;
+ENSEMBLE_ID (int) is the identifier of each ensemble member, known as dimension realization in [T0]_precipitation_on_catchments.nc</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="hybridurb.runners.runner.predict">
+<span class="sig-prename descclassname"><span class="pre">hybridurb.runners.runner.</span></span><span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rgRR</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rgID</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lams</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">equ</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#hybridurb.runners.runner.predict" title="Link to this definition">#</a></dt>
+<dd><p>Predict the probability of flooding for a given rainfall event <cite>rgRR</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rgRR</strong> – pd.DataFrame
+timeseries of the rainfall event. must have time as index and meteo catchments as columns</p></li>
+<li><p><strong>rgID</strong> – pd.DataFrame
+mapping table to map rainfall at gauges to rainfall at nodes. must contain rg_id. index is node_id</p></li>
+<li><p><strong>X</strong> – nx.Graph
+graph model (calibrated)</p></li>
+<li><p><strong>lams</strong> – lambda parameter (calibrated)</p></li>
+<li><p><strong>model</strong> – statistical model (calirbated)</p></li>
+<li><p><strong>equ</strong> – equation used for the <cite>model</cite></p></li>
+<li><p><strong>event_id</strong> – str
+used as the identifier for the results</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>y_pred</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-hybridurb.networksutils.delft3dfm_utils">
+<span id="utils"></span><h2>Utils<a class="headerlink" href="#module-hybridurb.networksutils.delft3dfm_utils" title="Link to this heading">#</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="hybridurb.networksutils.delft3dfm_utils.convert_geometries">
+<span class="sig-prename descclassname"><span class="pre">hybridurb.networksutils.delft3dfm_utils.</span></span><span class="sig-name descname"><span class="pre">convert_geometries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometries</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#hybridurb.networksutils.delft3dfm_utils.convert_geometries" title="Link to this definition">#</a></dt>
+<dd><p>Converts geometries and calculates additional attributes.</p>
+<p>Returns:
+dict: A dictionary containing the converted geometries.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="hybridurb.networksutils.delft3dfm_utils.extract_geometries">
+<span class="sig-prename descclassname"><span class="pre">hybridurb.networksutils.delft3dfm_utils.</span></span><span class="sig-name descname"><span class="pre">extract_geometries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DFlowFMModel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clip_region</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">GeoDataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#hybridurb.networksutils.delft3dfm_utils.extract_geometries" title="Link to this definition">#</a></dt>
+<dd><p>Extracts geometries from the DFlowFM model. If a region is provided, the geometries will be clipped to this region.</p>
+<p>Parameters:
+model (DFlowFMModel): A DFlowFMModel instance containing the model whoes geometries will be extracted.
+clip_region (gpd.GeoDataFrame, optional): A GeoPandas DataFrame containing the region to which the geometries will be clipped.</p>
+<blockquote>
+<div><p>If no region is provided, all geometries from the model will be returned.</p>
+</div></blockquote>
+<p>Returns:
+dict: A dictionary where the keys are the names of the geometries and the values are GeoPandas DataFrames containing the geometries.</p>
+<blockquote>
+<div><p>Each DataFrame has a ‘geometry’ column containing the geometry objects, and the rest of the columns contain attributes of the geometries.</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="hybridurb.networksutils.delft3dfm_utils.get_geometries_from_model">
+<span class="sig-prename descclassname"><span class="pre">hybridurb.networksutils.delft3dfm_utils.</span></span><span class="sig-name descname"><span class="pre">get_geometries_from_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_root</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mdu_fn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">CRS</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clip_region</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">GeoDataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geoms_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'geoms_dir'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#hybridurb.networksutils.delft3dfm_utils.get_geometries_from_model" title="Link to this definition">#</a></dt>
+<dd><p>Retrieves geometries from a given model directory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_root</strong> – The model root directory.</p></li>
+<li><p><strong>mdu_fn</strong> – The mdu file as relative path to model_root.</p></li>
+<li><p><strong>crs</strong> – The coordinate reference system.</p></li>
+<li><p><strong>clip_region</strong> – The region to clip geoms. Defaults to None.</p></li>
+<li><p><strong>geoms_dir</strong> – the dir to save the geoms.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The geometries from the model directory.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="hybridurb.networksutils.delft3dfm_utils.save_geometries">
+<span class="sig-prename descclassname"><span class="pre">hybridurb.networksutils.delft3dfm_utils.</span></span><span class="sig-name descname"><span class="pre">save_geometries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometries</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#hybridurb.networksutils.delft3dfm_utils.save_geometries" title="Link to this definition">#</a></dt>
+<dd><p>save geometries to dir</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="dev/dev_install.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Developer installation guide</p>
+      </div>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-hybridurb.networksutils.network">Network</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hybridurb.networksutils.network.NetworkModel"><code class="docutils literal notranslate"><span class="pre">NetworkModel</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#hybridurb.networksutils.network.NetworkModel.crs"><code class="docutils literal notranslate"><span class="pre">NetworkModel.crs</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#hybridurb.networksutils.network.NetworkModel.read"><code class="docutils literal notranslate"><span class="pre">NetworkModel.read()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#hybridurb.networksutils.network.NetworkModel.read_forcing"><code class="docutils literal notranslate"><span class="pre">NetworkModel.read_forcing()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#hybridurb.networksutils.network.NetworkModel.read_graphmodel"><code class="docutils literal notranslate"><span class="pre">NetworkModel.read_graphmodel()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#hybridurb.networksutils.network.NetworkModel.read_results"><code class="docutils literal notranslate"><span class="pre">NetworkModel.read_results()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#hybridurb.networksutils.network.NetworkModel.read_states"><code class="docutils literal notranslate"><span class="pre">NetworkModel.read_states()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#hybridurb.networksutils.network.NetworkModel.read_staticgeoms"><code class="docutils literal notranslate"><span class="pre">NetworkModel.read_staticgeoms()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#hybridurb.networksutils.network.NetworkModel.read_staticmaps"><code class="docutils literal notranslate"><span class="pre">NetworkModel.read_staticmaps()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#hybridurb.networksutils.network.NetworkModel.setup_basemaps"><code class="docutils literal notranslate"><span class="pre">NetworkModel.setup_basemaps()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#hybridurb.networksutils.network.NetworkModel.setup_dag"><code class="docutils literal notranslate"><span class="pre">NetworkModel.setup_dag()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#hybridurb.networksutils.network.NetworkModel.setup_diagram"><code class="docutils literal notranslate"><span class="pre">NetworkModel.setup_diagram()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#hybridurb.networksutils.network.NetworkModel.setup_edge_attributes"><code class="docutils literal notranslate"><span class="pre">NetworkModel.setup_edge_attributes()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#hybridurb.networksutils.network.NetworkModel.setup_edges"><code class="docutils literal notranslate"><span class="pre">NetworkModel.setup_edges()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#hybridurb.networksutils.network.NetworkModel.setup_graph"><code class="docutils literal notranslate"><span class="pre">NetworkModel.setup_graph()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#hybridurb.networksutils.network.NetworkModel.setup_node_attributes"><code class="docutils literal notranslate"><span class="pre">NetworkModel.setup_node_attributes()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#hybridurb.networksutils.network.NetworkModel.setup_nodes"><code class="docutils literal notranslate"><span class="pre">NetworkModel.setup_nodes()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#hybridurb.networksutils.network.NetworkModel.setup_partition"><code class="docutils literal notranslate"><span class="pre">NetworkModel.setup_partition()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#hybridurb.networksutils.network.NetworkModel.setup_pruning"><code class="docutils literal notranslate"><span class="pre">NetworkModel.setup_pruning()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#hybridurb.networksutils.network.NetworkModel.setup_subgraph"><code class="docutils literal notranslate"><span class="pre">NetworkModel.setup_subgraph()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#hybridurb.networksutils.network.NetworkModel.write"><code class="docutils literal notranslate"><span class="pre">NetworkModel.write()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#hybridurb.networksutils.network.NetworkModel.write_forcing"><code class="docutils literal notranslate"><span class="pre">NetworkModel.write_forcing()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#hybridurb.networksutils.network.NetworkModel.write_graphmodel"><code class="docutils literal notranslate"><span class="pre">NetworkModel.write_graphmodel()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#hybridurb.networksutils.network.NetworkModel.write_results"><code class="docutils literal notranslate"><span class="pre">NetworkModel.write_results()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#hybridurb.networksutils.network.NetworkModel.write_states"><code class="docutils literal notranslate"><span class="pre">NetworkModel.write_states()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#hybridurb.networksutils.network.NetworkModel.write_staticgeoms"><code class="docutils literal notranslate"><span class="pre">NetworkModel.write_staticgeoms()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#hybridurb.networksutils.network.NetworkModel.write_staticmaps"><code class="docutils literal notranslate"><span class="pre">NetworkModel.write_staticmaps()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hybridurb.networksutils.network_from_delft3dfm.Delft3dfmNetworkWrapper"><code class="docutils literal notranslate"><span class="pre">Delft3dfmNetworkWrapper</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#hybridurb.networksutils.network_from_delft3dfm.Delft3dfmNetworkWrapper.get_geoms_from_model"><code class="docutils literal notranslate"><span class="pre">Delft3dfmNetworkWrapper.get_geoms_from_model()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#hybridurb.networksutils.network_from_delft3dfm.Delft3dfmNetworkWrapper.get_network_from_geoms"><code class="docutils literal notranslate"><span class="pre">Delft3dfmNetworkWrapper.get_network_from_geoms()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#hybridurb.networksutils.network_from_delft3dfm.Delft3dfmNetworkWrapper.get_network_properties"><code class="docutils literal notranslate"><span class="pre">Delft3dfmNetworkWrapper.get_network_properties()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hybridurb.networksutils.network_from_delft3dfm.mystring"><code class="docutils literal notranslate"><span class="pre">mystring</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-hybridurb.runners.runner">Runner</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hybridurb.runners.runner.NowcastRunner"><code class="docutils literal notranslate"><span class="pre">NowcastRunner</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#hybridurb.runners.runner.NowcastRunner.run"><code class="docutils literal notranslate"><span class="pre">NowcastRunner.run()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#hybridurb.runners.runner.NowcastRunner.run_fews"><code class="docutils literal notranslate"><span class="pre">NowcastRunner.run_fews()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#hybridurb.runners.runner.NowcastRunner.run_postadaptor"><code class="docutils literal notranslate"><span class="pre">NowcastRunner.run_postadaptor()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#hybridurb.runners.runner.NowcastRunner.run_preadaptor"><code class="docutils literal notranslate"><span class="pre">NowcastRunner.run_preadaptor()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hybridurb.runners.runner.predict"><code class="docutils literal notranslate"><span class="pre">predict()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-hybridurb.networksutils.delft3dfm_utils">Utils</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hybridurb.networksutils.delft3dfm_utils.convert_geometries"><code class="docutils literal notranslate"><span class="pre">convert_geometries()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hybridurb.networksutils.delft3dfm_utils.extract_geometries"><code class="docutils literal notranslate"><span class="pre">extract_geometries()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hybridurb.networksutils.delft3dfm_utils.get_geometries_from_model"><code class="docutils literal notranslate"><span class="pre">get_geometries_from_model()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hybridurb.networksutils.delft3dfm_utils.save_geometries"><code class="docutils literal notranslate"><span class="pre">save_geometries()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/api.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2023, Xiaohan Li.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
